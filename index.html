@@ -685,9 +685,22 @@ async function loadLeads() {
     updateStats(); render();
     document.getElementById("lastUpdated").textContent="Updated "+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   } catch(err) {
-    document.getElementById("mainContent").innerHTML=`<div class="error-box"><strong>Could not load live data</strong>Apps Script must be deployed as a Web App with "Anyone" access. Showing sample data.</div>`;
-    allLeads=getSampleData(); updateStats(); render();
-    document.getElementById("lastUpdated").textContent="Sample data (offline)";
+    // Try alternate URL format (no action param) as fallback
+    try {
+      const res2 = await fetch(APPS_SCRIPT_URL);
+      const json2 = await res2.json();
+      // Handle both response formats
+      if (json2.status === 'success' || json2.success) {
+        allLeads = (json2.leads || []).map(normalizeLead);
+        updateStats(); render();
+        document.getElementById("lastUpdated").textContent="Updated "+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+        return;
+      }
+      throw new Error(JSON.stringify(json2));
+    } catch(err2) {
+      document.getElementById("mainContent").innerHTML=`<div class="error-box"><strong>Could not load live data from Google Sheets</strong>Error: ${err2.message}<br><br>Make sure your Apps Script is deployed as a Web App with access set to <strong>Anyone</strong>. Open the script, click Deploy → Manage Deployments → Edit → set Who has access to "Anyone" → Deploy.</div>`;
+      document.getElementById("lastUpdated").textContent="⚠ Connection failed";
+    }
   }
 }
 
