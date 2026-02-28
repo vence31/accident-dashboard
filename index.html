@@ -116,19 +116,7 @@ body::before {
 .main { flex:1; padding:24px; overflow-x:auto; }
 
 /* ── CONFIG PANEL ── */
-.config-panel {
-  background: var(--bg3); border:1px solid var(--border);
-  border-radius:var(--r); padding:16px 20px; margin-bottom:20px;
-  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
-}
-.config-panel label { font-family:var(--mono); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); }
-.config-input {
-  background:var(--bg2); border:1px solid var(--border); border-radius:8px;
-  padding:8px 12px; color:var(--text); font-family:var(--mono); font-size:12px;
-  outline:none; flex:1; min-width:300px; transition:border-color var(--tr);
-}
-.config-input:focus { border-color:var(--red); }
-.config-input::placeholder { color:var(--muted); }
+
 
 /* ── VIEWS ── */
 .view { display:none; }
@@ -416,15 +404,6 @@ tbody td { padding:11px 14px; font-size:13px; color:var(--text); white-space:now
   <!-- MAIN -->
   <div class="main">
 
-    <!-- CONFIG PANEL -->
-    <div class="config-panel">
-      <label>Apps Script URL</label>
-      <input class="config-input" id="scriptUrl" type="text"
-        placeholder="Paste your Google Apps Script Web App URL here..."
-        value="">
-      <button class="tb-btn primary" onclick="saveConfig()">Connect</button>
-    </div>
-
     <!-- OVERVIEW VIEW -->
     <div class="view active" id="view-overview">
 
@@ -523,7 +502,7 @@ tbody td { padding:11px 14px; font-size:13px; color:var(--text); white-space:now
             </tr>
           </thead>
           <tbody id="leadsBody">
-            <tr class="loading-row"><td colspan="11"><span class="spinner"></span>Connect your Apps Script URL above to load leads</td></tr>
+            <tr class="loading-row"><td colspan="11"><span class="spinner"></span>Loading leads...</td></tr>
           </tbody>
         </table>
       </div>
@@ -560,21 +539,13 @@ var activeFilters = {};
 // ── INIT ──
 window.onload = function() {
   if (SCRIPT_URL) {
-    document.getElementById('scriptUrl').value = SCRIPT_URL;
     loadData();
   }
   // Auto-refresh every 2 minutes
   setInterval(function(){ if(SCRIPT_URL) loadData(true); }, 120000);
 };
 
-function saveConfig() {
-  SCRIPT_URL = document.getElementById('scriptUrl').value.trim();
-  localStorage.setItem('accidentAI_url', SCRIPT_URL);
-  if (SCRIPT_URL) {
-    loadData();
-    showToast('Connected!', 'success');
-  }
-}
+
 
 // ── DATA LOADING ──
 function loadData(silent) {
