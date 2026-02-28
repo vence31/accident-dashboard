@@ -8,24 +8,73 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:      #0a0a0a;
-  --bg2:     #111111;
-  --bg3:     #1a1a1a;
-  --bg4:     #222222;
-  --red:     #ef4444;
-  --red-dim: #dc2626;
-  --red-glo: rgba(239,68,68,0.25);
-  --green:   #10b981;
-  --yellow:  #f59e0b;
-  --blue:    #3b82f6;
-  --text:    #f9fafb;
-  --muted:   #6b7280;
-  --border:  rgba(55,65,81,0.6);
+  /* Light theme */
+  --bg-light:      #f8fafc;
+  --bg2-light:     #ffffff;
+  --bg3-light:     #eef2f6;
+  --bg4-light:     #e2e8f0;
+  --text-light:    #0f172a;
+  --muted-light:   #64748b;
+  --border-light:  #e2e8f0;
+  --red-light:     #dc2626;
+  --red-dim-light: #b91c1c;
+  --red-glo-light: rgba(220,38,38,0.15);
+  --green-light:   #16a34a;
+  --yellow-light:  #eab308;
+  --blue-light:    #2563eb;
+
+  /* Dark theme */
+  --bg-dark:      #0a0a0a;
+  --bg2-dark:     #111111;
+  --bg3-dark:     #1a1a1a;
+  --bg4-dark:     #222222;
+  --text-dark:    #f9fafb;
+  --muted-dark:   #6b7280;
+  --border-dark:  rgba(55,65,81,0.6);
+  --red-dark:     #ef4444;
+  --red-dim-dark: #dc2626;
+  --red-glo-dark: rgba(239,68,68,0.25);
+  --green-dark:   #10b981;
+  --yellow-dark:  #f59e0b;
+  --blue-dark:    #3b82f6;
+
+  /* Default to dark (existing look) */
+  --bg:      var(--bg-dark);
+  --bg2:     var(--bg2-dark);
+  --bg3:     var(--bg3-dark);
+  --bg4:     var(--bg4-dark);
+  --text:    var(--text-dark);
+  --muted:   var(--muted-dark);
+  --border:  var(--border-dark);
+  --red:     var(--red-dark);
+  --red-dim: var(--red-dim-dark);
+  --red-glo: var(--red-glo-dark);
+  --green:   var(--green-dark);
+  --yellow:  var(--yellow-dark);
+  --blue:    var(--blue-dark);
+
   --font:    'Syne', sans-serif;
   --body:    'Inter', sans-serif;
   --mono:    'JetBrains Mono', monospace;
   --r: 10px;
   --tr: 0.2s ease;
+}
+
+/* Light theme overrides */
+body.light-theme {
+  --bg:      var(--bg-light);
+  --bg2:     var(--bg2-light);
+  --bg3:     var(--bg3-light);
+  --bg4:     var(--bg4-light);
+  --text:    var(--text-light);
+  --muted:   var(--muted-light);
+  --border:  var(--border-light);
+  --red:     var(--red-light);
+  --red-dim: var(--red-dim-light);
+  --red-glo: var(--red-glo-light);
+  --green:   var(--green-light);
+  --yellow:  var(--yellow-light);
+  --blue:    var(--blue-light);
 }
 *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior: smooth; }
@@ -36,6 +85,7 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 body::before {
   content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
@@ -44,10 +94,29 @@ body::before {
     radial-gradient(circle at 95% 95%, rgba(220,38,38,0.06) 0%, transparent 35%);
 }
 
+
+/* ── THEME TOGGLE ── */
+.theme-toggle {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 30px; padding: 3px; cursor: pointer;
+  transition: all 0.2s ease;
+}
+.theme-toggle:hover { border-color: var(--red); }
+.theme-option {
+  padding: 5px 12px; border-radius: 30px;
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--muted); transition: all 0.2s ease; user-select: none;
+}
+.theme-option.active { background: var(--red); color: white; }
+
 /* ── TOPBAR ── */
+body.light-theme .topbar { background: rgba(255,255,255,0.92); border-bottom-color: #e2e8f0; }
+body.light-theme .topbar .logo-text, body.light-theme .topbar .live-dot+span { color: #0f172a; }
 .topbar {
   position: sticky; top:0; z-index:100;
-  background: rgba(10,10,10,0.95);
+  background: rgba(10,10,10,0.95); transition: background 0.3s ease;
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   padding: 0 24px;
@@ -352,6 +421,10 @@ tbody td { padding:11px 14px; font-size:13px; color:var(--text); white-space:now
   </div>
   <div class="topbar-right">
     <span id="lastUpdated">—</span>
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <span class="theme-option dark active" id="theme-dark">🌙 Dark</span>
+      <span class="theme-option light" id="theme-light">☀️ Light</span>
+    </div>
     <button class="tb-btn" onclick="loadData()">↻ Refresh</button>
     <button class="tb-btn primary" onclick="window.open('https://vence31.github.io/accident-intake/','_blank')">+ New Intake</button>
   </div>
@@ -940,6 +1013,29 @@ function showToast(msg, type) {
   t.className = 'toast show ' + (type||'');
   setTimeout(function(){ t.className='toast'; }, 3000);
 }
+
+// ── THEME TOGGLE ──
+function toggleTheme() {
+  const body = document.body;
+  const lightBtn = document.getElementById('theme-light');
+  const darkBtn  = document.getElementById('theme-dark');
+  body.classList.toggle('light-theme');
+  const isLight = body.classList.contains('light-theme');
+  lightBtn.classList.toggle('active',  isLight);
+  darkBtn.classList.toggle('active',  !isLight);
+  localStorage.setItem('accidentAI-theme', isLight ? 'light' : 'dark');
+}
+
+// Load saved theme on startup
+(function() {
+  const saved = localStorage.getItem('accidentAI-theme');
+  if (saved === 'light') {
+    document.body.classList.add('light-theme');
+    document.getElementById('theme-light').classList.add('active');
+    document.getElementById('theme-dark').classList.remove('active');
+  }
+})();
+
 </script>
 </body>
 </html>
