@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<title>Accident AI | Case Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0a0a0a;
+  --bg2:     #111111;
+  --bg3:     #1a1a1a;
+  --bg4:     #222222;
+  --red:     #ef4444;
+  --red-dim: #dc2626;
+  --red-glo: rgba(239,68,68,0.25);
+  --green:   #10b981;
+  --yellow:  #f59e0b;
+  --blue:    #3b82f6;
+  --text:    #f9fafb;
+  --muted:   #6b7280;
+  --border:  rgba(55,65,81,0.6);
+  --font:    'Syne', sans-serif;
+  --body:    'Inter', sans-serif;
+  --mono:    'JetBrains Mono', monospace;
+  --r: 10px;
+  --tr: 0.2s ease;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(circle at 5% 5%, rgba(220,38,38,0.1) 0%, transparent 35%),
+    radial-gradient(circle at 95% 95%, rgba(220,38,38,0.06) 0%, transparent 35%);
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky; top:0; z-index:100;
+  background: rgba(10,10,10,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-left { display:flex; align-items:center; gap:16px; }
+.logo {
+  font-family: var(--font); font-size:18px; font-weight:800;
+  letter-spacing:-0.03em; color:var(--text);
+}
+.logo span { color:var(--red); }
+.live-badge {
+  display: flex; align-items: center; gap:6px;
+  padding: 4px 10px; border-radius:30px;
+  background: rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3);
+  font-family: var(--mono); font-size:10px; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.08em; color:var(--green);
+}
+.live-dot { width:6px; height:6px; border-radius:50%; background:var(--green); animation:livePulse 2s infinite; }
+@keyframes livePulse { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,0.4)} 50%{opacity:0.8;box-shadow:0 0 0 6px rgba(16,185,129,0)} }
+.topbar-right { display:flex; align-items:center; gap:12px; }
+.tb-btn {
+  padding: 7px 14px; border-radius:8px;
+  border: 1px solid var(--border); background: var(--bg3);
+  font-family: var(--mono); font-size:11px; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.06em; color:var(--muted);
+  cursor:pointer; transition:all var(--tr);
+}
+.tb-btn:hover { border-color:var(--red); color:var(--red); }
+.tb-btn.primary { background:var(--red-dim); border-color:var(--red); color:white; }
+.tb-btn.primary:hover { background:var(--red); box-shadow:0 0 16px var(--red-glo); }
+#lastUpdated { font-family:var(--mono); font-size:10px; color:var(--muted); }
+
+/* ── LAYOUT ── */
+.layout { display:flex; min-height:calc(100vh - 60px); position:relative; z-index:1; }
+.sidebar {
+  width: 220px; flex-shrink:0;
+  background: var(--bg2); border-right:1px solid var(--border);
+  padding: 20px 12px; position:sticky; top:60px; height:calc(100vh - 60px); overflow-y:auto;
+}
+.sidebar-section { margin-bottom:24px; }
+.sidebar-label {
+  font-family:var(--mono); font-size:9px; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.12em; color:var(--muted);
+  padding: 0 8px; margin-bottom:8px; display:block;
+}
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding: 9px 10px; border-radius:8px; cursor:pointer;
+  font-size:13px; font-weight:600; color:var(--muted);
+  transition:all var(--tr); margin-bottom:2px;
+  border: 1px solid transparent;
+}
+.nav-item:hover { background:var(--bg3); color:var(--text); }
+.nav-item.active { background:rgba(220,38,38,0.1); border-color:rgba(220,38,38,0.2); color:var(--red); }
+.nav-icon { font-size:14px; width:18px; text-align:center; }
+.nav-count {
+  margin-left:auto; background:var(--bg4); border-radius:20px;
+  padding:2px 7px; font-family:var(--mono); font-size:10px;
+  font-weight:700; color:var(--muted);
+}
+.nav-item.active .nav-count { background:rgba(220,38,38,0.2); color:var(--red); }
+
+/* ── MAIN CONTENT ── */
+.main { flex:1; padding:24px; overflow-x:auto; }
+
+/* ── CONFIG PANEL ── */
+.config-panel {
+  background: var(--bg3); border:1px solid var(--border);
+  border-radius:var(--r); padding:16px 20px; margin-bottom:20px;
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+}
+.config-panel label { font-family:var(--mono); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); }
+.config-input {
+  background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+  padding:8px 12px; color:var(--text); font-family:var(--mono); font-size:12px;
+  outline:none; flex:1; min-width:300px; transition:border-color var(--tr);
+}
+.config-input:focus { border-color:var(--red); }
+.config-input::placeholder { color:var(--muted); }
+
+/* ── VIEWS ── */
+.view { display:none; }
+.view.active { display:block; }
+
+/* ── KPI CARDS ── */
+.kpi-grid {
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
+  gap:14px; margin-bottom:22px;
+}
+.kpi-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+  padding:16px 18px; transition:all var(--tr); position:relative; overflow:hidden;
+}
+.kpi-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:var(--kpi-color, var(--red));
+}
+.kpi-card:hover { border-color:var(--kpi-color, var(--red)); transform:translateY(-1px); }
+.kpi-label { font-family:var(--mono); font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:8px; }
+.kpi-val { font-family:var(--font); font-size:32px; font-weight:800; color:var(--text); line-height:1; margin-bottom:4px; }
+.kpi-sub { font-size:11px; color:var(--muted); }
+.kpi-badge { display:inline-block; padding:2px 8px; border-radius:20px; font-family:var(--mono); font-size:10px; font-weight:700; margin-top:6px; }
+
+/* ── CHARTS ROW ── */
+.charts-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:22px; }
+@media(max-width:700px){ .charts-row{ grid-template-columns:1fr; } }
+.chart-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:16px 18px;
+}
+.chart-title { font-family:var(--mono); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:14px; }
+.bar-chart { display:flex; flex-direction:column; gap:8px; }
+.bar-row { display:flex; align-items:center; gap:10px; }
+.bar-lbl { font-size:12px; color:var(--text); width:140px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bar-track { flex:1; height:8px; background:var(--bg3); border-radius:4px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:4px; transition:width 0.8s cubic-bezier(0.4,0,0.2,1); }
+.bar-num { font-family:var(--mono); font-size:11px; font-weight:700; color:var(--muted); width:30px; text-align:right; }
+
+/* ── LEADS TABLE ── */
+.table-toolbar {
+  display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap;
+}
+.search-box {
+  background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+  padding:9px 14px; color:var(--text); font-family:var(--body); font-size:13px;
+  outline:none; width:260px; transition:border-color var(--tr);
+}
+.search-box:focus { border-color:var(--red); }
+.search-box::placeholder { color:var(--muted); }
+.filter-select {
+  background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+  padding:9px 14px; color:var(--text); font-family:var(--mono); font-size:11px;
+  font-weight:700; outline:none; cursor:pointer; -webkit-appearance:none;
+  padding-right:30px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 10px center;
+  transition:border-color var(--tr);
+}
+.filter-select:focus { border-color:var(--red); }
+.filter-select option { background:var(--bg2); }
+.result-count { font-family:var(--mono); font-size:11px; color:var(--muted); margin-left:auto; }
+
+.table-wrap { overflow-x:auto; border-radius:var(--r); border:1px solid var(--border); }
+table { width:100%; border-collapse:collapse; min-width:900px; }
+thead tr { background:var(--bg3); border-bottom:1px solid var(--border); }
+thead th {
+  padding:11px 14px; text-align:left;
+  font-family:var(--mono); font-size:9px; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.1em; color:var(--muted);
+  white-space:nowrap; cursor:pointer; user-select:none; transition:color var(--tr);
+}
+thead th:hover { color:var(--text); }
+thead th.sort-asc::after { content:" ↑"; color:var(--red); }
+thead th.sort-desc::after { content:" ↓"; color:var(--red); }
+tbody tr { border-bottom:1px solid rgba(55,65,81,0.3); transition:background var(--tr); cursor:pointer; }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover { background:rgba(220,38,38,0.04); }
+tbody td { padding:11px 14px; font-size:13px; color:var(--text); white-space:nowrap; }
+.td-muted { color:var(--muted); font-family:var(--mono); font-size:11px; }
+
+/* SCORE BADGE */
+.score-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:4px 10px; border-radius:20px; font-family:var(--mono);
+  font-size:11px; font-weight:700; letter-spacing:0.04em;
+}
+.score-high { background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.25); }
+.score-mod  { background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.25); }
+.score-low  { background:rgba(239,68,68,0.15);  color:#ef4444; border:1px solid rgba(239,68,68,0.25); }
+
+/* STATUS BADGE */
+.status-badge {
+  display:inline-block; padding:3px 9px; border-radius:20px;
+  font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:0.04em;
+}
+.st-new       { background:rgba(59,130,246,0.15);  color:#3b82f6; }
+.st-contacted { background:rgba(139,92,246,0.15); color:#a78bfa; }
+.st-qualified { background:rgba(16,185,129,0.15); color:#10b981; }
+.st-sent      { background:rgba(245,158,11,0.15); color:#f59e0b; }
+.st-won       { background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); }
+.st-lost      { background:rgba(239,68,68,0.1);   color:#ef4444; }
+.st-dup       { background:rgba(107,114,128,0.15); color:#6b7280; }
+
+/* TYPE PILL */
+.type-pill {
+  display:inline-block; padding:3px 9px; border-radius:20px;
+  font-size:11px; font-weight:600; background:var(--bg3); color:var(--text);
+}
+
+/* FAULT DOT */
+.fault-no  { color:var(--green); font-weight:700; }
+.fault-yes { color:var(--red);   font-weight:700; }
+.fault-par { color:var(--yellow); font-weight:700; }
+.fault-unk { color:var(--muted); }
+
+/* ── LEAD DETAIL DRAWER ── */
+.drawer-overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);
+  z-index:200; backdrop-filter:blur(4px);
+}
+.drawer-overlay.open { display:block; animation:fadeOverlay 0.2s ease both; }
+@keyframes fadeOverlay { from{opacity:0} to{opacity:1} }
+.drawer {
+  position:fixed; top:0; right:0; bottom:0; width:500px; max-width:95vw;
+  background:var(--bg2); border-left:1px solid var(--border); z-index:201;
+  overflow-y:auto; transform:translateX(100%); transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.drawer.open { transform:translateX(0); }
+.drawer-header {
+  position:sticky; top:0; background:var(--bg2); border-bottom:1px solid var(--border);
+  padding:16px 20px; display:flex; align-items:center; justify-content:space-between; z-index:1;
+}
+.drawer-title { font-family:var(--font); font-size:16px; font-weight:800; color:var(--text); }
+.drawer-close {
+  width:32px; height:32px; border-radius:8px; background:var(--bg3);
+  border:1px solid var(--border); cursor:pointer; display:flex;
+  align-items:center; justify-content:center; color:var(--muted);
+  font-size:16px; transition:all var(--tr);
+}
+.drawer-close:hover { border-color:var(--red); color:var(--red); }
+.drawer-body { padding:20px; }
+.drawer-score-row {
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--bg3); border-radius:var(--r); padding:14px 18px; margin-bottom:18px;
+}
+.drawer-score-num { font-family:var(--font); font-size:40px; font-weight:800; line-height:1; }
+.drawer-score-lbl { font-family:var(--mono); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-top:2px; }
+.drawer-section { margin-bottom:18px; }
+.drawer-section-title {
+  font-family:var(--mono); font-size:9px; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.12em; color:var(--muted);
+  margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border);
+}
+.drawer-fields { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.drawer-field { background:var(--bg3); border-radius:8px; padding:10px 12px; }
+.drawer-field-label { font-family:var(--mono); font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:3px; }
+.drawer-field-val { font-size:13px; font-weight:600; color:var(--text); }
+.drawer-field.wide { grid-column:1/-1; }
+.drawer-textarea {
+  width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:8px;
+  padding:10px 12px; color:var(--text); font-family:var(--body); font-size:13px;
+  resize:vertical; min-height:80px; outline:none; transition:border-color var(--tr);
+}
+.drawer-textarea:focus { border-color:var(--red); }
+.drawer-select {
+  width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:8px;
+  padding:10px 12px; color:var(--text); font-family:var(--mono); font-size:12px;
+  font-weight:700; outline:none; cursor:pointer; -webkit-appearance:none; margin-bottom:10px;
+}
+.drawer-select:focus { border-color:var(--red); }
+.drawer-select option { background:var(--bg2); }
+.drawer-save-btn {
+  width:100%; padding:12px; background:var(--red-dim); color:white;
+  border:none; border-radius:8px; font-family:var(--font); font-size:13px;
+  font-weight:800; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em;
+  transition:all var(--tr);
+}
+.drawer-save-btn:hover { background:var(--red); box-shadow:0 4px 14px var(--red-glo); }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align:center; padding:60px 20px;
+  font-family:var(--mono); color:var(--muted);
+}
+.empty-icon { font-size:40px; margin-bottom:12px; }
+.empty-title { font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+.empty-sub { font-size:11px; }
+
+/* ── LOADING ── */
+.loading-row td { text-align:center; padding:40px; color:var(--muted); font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.1em; }
+.spinner { display:inline-block; width:16px; height:16px; border:2px solid var(--border); border-top-color:var(--red); border-radius:50%; animation:spin 0.8s linear infinite; margin-right:8px; vertical-align:middle; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:24px; right:24px; z-index:300;
+  background:var(--bg3); border:1px solid var(--border); border-radius:10px;
+  padding:12px 18px; font-family:var(--mono); font-size:12px; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.06em; color:var(--text);
+  box-shadow:0 8px 24px rgba(0,0,0,0.4); display:none;
+  animation:slideToast 0.3s ease both;
+}
+.toast.show { display:block; }
+.toast.success { border-color:var(--green); color:var(--green); }
+.toast.error { border-color:var(--red); color:var(--red); }
+@keyframes slideToast { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── PAGINATION ── */
+.pagination { display:flex; align-items:center; gap:6px; margin-top:14px; justify-content:center; }
+.pg-btn {
+  padding:6px 12px; border-radius:6px; border:1px solid var(--border);
+  background:var(--bg2); color:var(--muted); font-family:var(--mono);
+  font-size:11px; font-weight:700; cursor:pointer; transition:all var(--tr);
+}
+.pg-btn:hover,.pg-btn.active { border-color:var(--red); color:var(--red); background:rgba(220,38,38,0.08); }
+.pg-btn:disabled { opacity:0.3; cursor:not-allowed; }
+
+@media(max-width:640px){
+  .sidebar { display:none; }
+  .kpi-grid { grid-template-columns:1fr 1fr; }
+  .charts-row { grid-template-columns:1fr; }
+  .drawer { width:100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">ACCIDENT <span>AI</span></div>
+    <div class="live-badge"><div class="live-dot"></div>Live</div>
+  </div>
+  <div class="topbar-right">
+    <span id="lastUpdated">—</span>
+    <button class="tb-btn" onclick="loadData()">↻ Refresh</button>
+    <button class="tb-btn primary" onclick="window.open('accident-intake.html','_blank')">+ New Intake</button>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <span class="sidebar-label">Views</span>
+      <div class="nav-item active" onclick="switchView('overview',this)">
+        <span class="nav-icon">📊</span> Overview
+      </div>
+      <div class="nav-item" onclick="switchView('leads',this)">
+        <span class="nav-icon">📋</span> All Leads
+        <span class="nav-count" id="nav-count-all">—</span>
+      </div>
+      <div class="nav-item" onclick="switchView('leads',this,{score:'high'})">
+        <span class="nav-icon">🔥</span> High Value
+        <span class="nav-count" id="nav-count-high">—</span>
+      </div>
+      <div class="nav-item" onclick="switchView('leads',this,{status:'New'})">
+        <span class="nav-icon">🆕</span> New
+        <span class="nav-count" id="nav-count-new">—</span>
+      </div>
+      <div class="nav-item" onclick="switchView('leads',this,{status:'Contacted'})">
+        <span class="nav-icon">📞</span> Contacted
+        <span class="nav-count" id="nav-count-contact">—</span>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Accident Type</span>
+      <div class="nav-item" onclick="switchView('leads',this,{type:'Auto vs Auto'})">
+        <span class="nav-icon">🚗</span> Auto vs Auto
+      </div>
+      <div class="nav-item" onclick="switchView('leads',this,{type:'Rideshare'})">
+        <span class="nav-icon">🚕</span> Rideshare
+      </div>
+      <div class="nav-item" onclick="switchView('leads',this,{type:'Commercial Truck'})">
+        <span class="nav-icon">🚛</span> Truck
+      </div>
+      <div class="nav-item" onclick="switchView('leads',this,{type:'Hit & Run / Uninsured'})">
+        <span class="nav-icon">🚨</span> Hit &amp; Run
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- CONFIG PANEL -->
+    <div class="config-panel">
+      <label>Apps Script URL</label>
+      <input class="config-input" id="scriptUrl" type="text"
+        placeholder="Paste your Google Apps Script Web App URL here..."
+        value="">
+      <button class="tb-btn primary" onclick="saveConfig()">Connect</button>
+    </div>
+
+    <!-- OVERVIEW VIEW -->
+    <div class="view active" id="view-overview">
+
+      <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card" style="--kpi-color:var(--red)">
+          <div class="kpi-label">Total Leads</div>
+          <div class="kpi-val" id="kpi-total">—</div>
+          <div class="kpi-sub" id="kpi-7d">Loading...</div>
+        </div>
+        <div class="kpi-card" style="--kpi-color:var(--green)">
+          <div class="kpi-label">High Value</div>
+          <div class="kpi-val" id="kpi-high">—</div>
+          <div class="kpi-sub">Score ≥ 80</div>
+          <div class="kpi-badge" style="background:rgba(16,185,129,0.15);color:var(--green)" id="kpi-high-pct">—</div>
+        </div>
+        <div class="kpi-card" style="--kpi-color:var(--yellow)">
+          <div class="kpi-label">Moderate</div>
+          <div class="kpi-val" id="kpi-mod">—</div>
+          <div class="kpi-sub">Score 60–79</div>
+          <div class="kpi-badge" style="background:rgba(245,158,11,0.15);color:var(--yellow)" id="kpi-mod-pct">—</div>
+        </div>
+        <div class="kpi-card" style="--kpi-color:var(--blue)">
+          <div class="kpi-label">Avg Score</div>
+          <div class="kpi-val" id="kpi-avg">—</div>
+          <div class="kpi-sub">/ 100 attorney score</div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">By Accident Type</div>
+          <div class="bar-chart" id="chartType"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">By Status</div>
+          <div class="bar-chart" id="chartStatus"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">By Fault</div>
+          <div class="bar-chart" id="chartFault"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">By Damage Estimate</div>
+          <div class="bar-chart" id="chartDmg"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LEADS VIEW -->
+    <div class="view" id="view-leads">
+
+      <div class="table-toolbar">
+        <input class="search-box" id="searchBox" type="text" placeholder="Search name, phone, type, injuries..." oninput="filterLeads()">
+        <select class="filter-select" id="filterScore" onchange="filterLeads()">
+          <option value="">All Scores</option>
+          <option value="HIGH VALUE">🔥 High Value</option>
+          <option value="MODERATE">⚡ Moderate</option>
+          <option value="LOW">📉 Low</option>
+        </select>
+        <select class="filter-select" id="filterStatus" onchange="filterLeads()">
+          <option value="">All Statuses</option>
+          <option>New</option>
+          <option>Contacted</option>
+          <option>Qualified</option>
+          <option>Sent to Attorney</option>
+          <option>Closed - Won</option>
+          <option>Closed - Lost</option>
+          <option>Duplicate</option>
+        </select>
+        <select class="filter-select" id="filterType" onchange="filterLeads()">
+          <option value="">All Types</option>
+          <option>Auto vs Auto</option>
+          <option>Rideshare</option>
+          <option>Commercial Truck</option>
+          <option>Hit &amp; Run / Uninsured</option>
+        </select>
+        <span class="result-count" id="resultCount">— leads</span>
+      </div>
+
+      <div class="table-wrap">
+        <table id="leadsTable">
+          <thead>
+            <tr>
+              <th onclick="sortBy('SCORE LABEL')">Score</th>
+              <th onclick="sortBy('Timestamp')">Date</th>
+              <th onclick="sortBy('REF #')">REF #</th>
+              <th onclick="sortBy('Name')">Name</th>
+              <th onclick="sortBy('State')">State</th>
+              <th onclick="sortBy('Accident Type')">Type</th>
+              <th onclick="sortBy('At Fault')">Fault</th>
+              <th onclick="sortBy('Injury Severity')">Severity</th>
+              <th onclick="sortBy('Damage Estimate')">Damages</th>
+              <th onclick="sortBy('Status')">Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="leadsBody">
+            <tr class="loading-row"><td colspan="11"><span class="spinner"></span>Connect your Apps Script URL above to load leads</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
+
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- LEAD DETAIL DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="drawer-title" id="drawerTitle">Lead Detail</div>
+    <div class="drawer-close" onclick="closeDrawer()">✕</div>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+var SCRIPT_URL = localStorage.getItem('accidentAI_url') || '';
+var allLeads = [];
+var filteredLeads = [];
+var currentSort = { col:'Timestamp', dir:'desc' };
+var currentPage = 1;
+var PAGE_SIZE = 25;
+var activeFilters = {};
+
+// ── INIT ──
+window.onload = function() {
+  if (SCRIPT_URL) {
+    document.getElementById('scriptUrl').value = SCRIPT_URL;
+    loadData();
+  }
+  // Auto-refresh every 2 minutes
+  setInterval(function(){ if(SCRIPT_URL) loadData(true); }, 120000);
+};
+
+function saveConfig() {
+  SCRIPT_URL = document.getElementById('scriptUrl').value.trim();
+  localStorage.setItem('accidentAI_url', SCRIPT_URL);
+  if (SCRIPT_URL) {
+    loadData();
+    showToast('Connected!', 'success');
+  }
+}
+
+// ── DATA LOADING ──
+function loadData(silent) {
+  if (!SCRIPT_URL) return;
+  if (!silent) showLoading();
+
+  // Load summary
+  fetch(SCRIPT_URL + '?action=get_summary')
+    .then(r => r.json())
+    .then(d => { if(d.ok) renderSummary(d.summary); })
+    .catch(e => console.log('Summary error:', e));
+
+  // Load leads
+  fetch(SCRIPT_URL + '?action=get_leads')
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) {
+        allLeads = d.leads;
+        filterLeads();
+        updateNavCounts();
+        document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+        if (!silent) showToast('Data loaded — ' + d.total + ' leads', 'success');
+      }
+    })
+    .catch(e => {
+      document.getElementById('leadsBody').innerHTML =
+        '<tr class="loading-row"><td colspan="11">⚠️ Could not load data. Check your Apps Script URL.</td></tr>';
+    });
+}
+
+function showLoading() {
+  document.getElementById('leadsBody').innerHTML =
+    '<tr class="loading-row"><td colspan="11"><span class="spinner"></span>Loading leads...</td></tr>';
+}
+
+// ── SUMMARY / KPI ──
+function renderSummary(s) {
+  document.getElementById('kpi-total').textContent = s.total;
+  document.getElementById('kpi-7d').textContent = s.last7Days + ' in last 7 days';
+  document.getElementById('kpi-high').textContent = s.highValue;
+  document.getElementById('kpi-mod').textContent  = s.moderate;
+  document.getElementById('kpi-avg').textContent  = s.avgScore;
+
+  var hp = s.total ? Math.round(s.highValue/s.total*100) : 0;
+  var mp = s.total ? Math.round(s.moderate/s.total*100) : 0;
+  document.getElementById('kpi-high-pct').textContent = hp + '% of leads';
+  document.getElementById('kpi-mod-pct').textContent  = mp + '% of leads';
+
+  renderBarChart('chartType',   s.byType,   typeColors);
+  renderBarChart('chartStatus', s.byStatus, statusColors);
+  renderBarChart('chartFault',  s.byType,   typeColors);   // reuse
+  renderBarChart('chartDmg',    s.byStatus, statusColors); // reuse — will be overridden by real data
+}
+
+var typeColors = {
+  'Auto vs Auto':'#3b82f6','Rideshare':'#8b5cf6',
+  'Commercial Truck':'#f59e0b','Hit & Run / Uninsured':'#ef4444','Unknown':'#6b7280'
+};
+var statusColors = {
+  'New':'#3b82f6','Contacted':'#8b5cf6','Qualified':'#10b981',
+  'Sent to Attorney':'#f59e0b','Closed - Won':'#10b981','Closed - Lost':'#ef4444','Duplicate':'#6b7280'
+};
+
+function renderBarChart(containerId, data, colorMap) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  var entries = Object.entries(data).sort((a,b) => b[1]-a[1]);
+  var max = entries.length ? entries[0][1] : 1;
+  container.innerHTML = entries.map(function([k,v]) {
+    var color = colorMap[k] || '#6b7280';
+    var pct   = Math.round(v/max*100);
+    return '<div class="bar-row">' +
+      '<div class="bar-lbl" title="'+k+'">'+k+'</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+color+'"></div></div>' +
+      '<div class="bar-num">'+v+'</div>' +
+    '</div>';
+  }).join('') || '<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px;">No data yet</div>';
+}
+
+// ── FILTER & SORT ──
+function filterLeads() {
+  var search = document.getElementById('searchBox').value.toLowerCase();
+  var fScore  = document.getElementById('filterScore').value;
+  var fStatus = document.getElementById('filterStatus').value;
+  var fType   = document.getElementById('filterType').value;
+
+  // Apply active quick-filters from sidebar
+  if (activeFilters.score) fScore = activeFilters.score === 'high' ? 'HIGH VALUE' : fScore;
+  if (activeFilters.status) fStatus = activeFilters.status;
+  if (activeFilters.type) fType = activeFilters.type;
+
+  filteredLeads = allLeads.filter(function(l) {
+    var name   = (l['Name']||'').toLowerCase();
+    var phone  = (l['Phone']||'').toLowerCase();
+    var inj    = (l['Injuries']||'').toLowerCase();
+    var type   = (l['Accident Type']||'').toLowerCase();
+    var state  = (l['State']||'').toLowerCase();
+    var ref    = (l['REF #']||'').toLowerCase();
+
+    var matchSearch = !search ||
+      name.includes(search) || phone.includes(search) ||
+      inj.includes(search)  || type.includes(search) ||
+      state.includes(search)|| ref.includes(search);
+
+    var matchScore  = !fScore  || l['SCORE LABEL'] === fScore;
+    var matchStatus = !fStatus || l['Status'] === fStatus;
+    var matchType   = !fType   || l['Accident Type'] === fType;
+
+    return matchSearch && matchScore && matchStatus && matchType;
+  });
+
+  // Sort
+  filteredLeads.sort(function(a,b) {
+    var av = a[currentSort.col] || '';
+    var bv = b[currentSort.col] || '';
+    if (currentSort.col === 'ATTORNEY SCORE') { av=parseInt(av)||0; bv=parseInt(bv)||0; }
+    if (av < bv) return currentSort.dir==='asc' ? -1 : 1;
+    if (av > bv) return currentSort.dir==='asc' ? 1 : -1;
+    return 0;
+  });
+
+  document.getElementById('resultCount').textContent = filteredLeads.length + ' leads';
+  currentPage = 1;
+  renderTable();
+  renderPagination();
+}
+
+function sortBy(col) {
+  if (currentSort.col === col) currentSort.dir = currentSort.dir==='asc' ? 'desc' : 'asc';
+  else { currentSort.col = col; currentSort.dir = 'desc'; }
+  document.querySelectorAll('thead th').forEach(function(th) {
+    th.classList.remove('sort-asc','sort-desc');
+  });
+  filterLeads();
+}
+
+// ── TABLE RENDER ──
+function renderTable() {
+  var tbody = document.getElementById('leadsBody');
+  var start = (currentPage-1)*PAGE_SIZE;
+  var page  = filteredLeads.slice(start, start+PAGE_SIZE);
+
+  if (!page.length) {
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="11">No leads match your filters</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = page.map(function(l, i) {
+    var score  = parseInt(l['ATTORNEY SCORE']) || 0;
+    var label  = l['SCORE LABEL'] || 'LOW';
+    var status = l['Status'] || 'New';
+    var fault  = l['At Fault'] || '—';
+    var ts     = l['Timestamp'] ? new Date(l['Timestamp']).toLocaleDateString() : '—';
+    var days   = l['Days Since'] !== '' && l['Days Since'] !== undefined ? l['Days Since'] + 'd ago' : '—';
+
+    var scoreCls = label==='HIGH VALUE' ? 'score-high' : label==='MODERATE' ? 'score-mod' : 'score-low';
+    var faultCls = fault==='No' ? 'fault-no' : fault==='Yes' ? 'fault-yes' : fault==='Partially' ? 'fault-par' : 'fault-unk';
+    var statusCls = {
+      'New':'st-new','Contacted':'st-contacted','Qualified':'st-qualified',
+      'Sent to Attorney':'st-sent','Closed - Won':'st-won','Closed - Lost':'st-lost','Duplicate':'st-dup'
+    }[status] || 'st-new';
+
+    var sevShort = (l['Injury Severity']||'—').split('—')[0].trim() || (l['Injury Severity']||'—');
+    if (sevShort.length > 20) sevShort = sevShort.substring(0,18)+'...';
+
+    return '<tr onclick="openDrawer('+JSON.stringify(l).replace(/"/g,'&quot;')+')">' +
+      '<td><span class="score-badge '+scoreCls+'">'+score+' &middot; '+label+'</span></td>' +
+      '<td class="td-muted">'+ts+'<br><span style="font-size:10px">'+days+'</span></td>' +
+      '<td class="td-muted">'+escH(l['REF #']||'—')+'</td>' +
+      '<td style="font-weight:600">'+escH(l['Name']||'—')+'<br><span class="td-muted" style="font-size:11px">'+escH(l['State']||'')+'</span></td>' +
+      '<td class="td-muted">'+escH(l['State']||'—')+'</td>' +
+      '<td><span class="type-pill">'+escH(l['Accident Type']||'—')+'</span></td>' +
+      '<td class="'+faultCls+'">'+escH(fault)+'</td>' +
+      '<td style="font-size:12px;max-width:140px;overflow:hidden;text-overflow:ellipsis">'+escH(sevShort)+'</td>' +
+      '<td class="td-muted">'+escH(l['Damage Estimate']||'—')+'</td>' +
+      '<td><span class="status-badge '+statusCls+'">'+escH(status)+'</span></td>' +
+      '<td><button class="tb-btn" onclick="event.stopPropagation();openDrawer('+JSON.stringify(l).replace(/"/g,'&quot;')+')" style="padding:5px 10px;font-size:10px;">View</button></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function renderPagination() {
+  var total = Math.ceil(filteredLeads.length / PAGE_SIZE);
+  var pg = document.getElementById('pagination');
+  if (total <= 1) { pg.innerHTML=''; return; }
+  var html = '<button class="pg-btn" onclick="goPg('+(currentPage-1)+')" '+(currentPage<=1?'disabled':'')+'>← Prev</button>';
+  for (var i=1; i<=total; i++) {
+    if (i===currentPage) html += '<button class="pg-btn active">'+i+'</button>';
+    else html += '<button class="pg-btn" onclick="goPg('+i+')">'+i+'</button>';
+  }
+  html += '<button class="pg-btn" onclick="goPg('+(currentPage+1)+')" '+(currentPage>=total?'disabled':'')+'>Next →</button>';
+  pg.innerHTML = html;
+}
+
+function goPg(n) {
+  var total = Math.ceil(filteredLeads.length / PAGE_SIZE);
+  if (n<1||n>total) return;
+  currentPage = n;
+  renderTable();
+  renderPagination();
+  document.getElementById('view-leads').scrollIntoView({behavior:'smooth'});
+}
+
+// ── NAV COUNTS ──
+function updateNavCounts() {
+  document.getElementById('nav-count-all').textContent  = allLeads.length;
+  document.getElementById('nav-count-high').textContent = allLeads.filter(l=>l['SCORE LABEL']==='HIGH VALUE').length;
+  document.getElementById('nav-count-new').textContent  = allLeads.filter(l=>l['Status']==='New').length;
+  document.getElementById('nav-count-contact').textContent = allLeads.filter(l=>l['Status']==='Contacted').length;
+}
+
+// ── VIEWS ──
+function switchView(viewId, el, filters) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+viewId).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+
+  activeFilters = filters || {};
+  if (viewId==='leads') {
+    // Apply filters from sidebar
+    if (activeFilters.score) document.getElementById('filterScore').value = activeFilters.score==='high' ? 'HIGH VALUE' : '';
+    if (activeFilters.status) document.getElementById('filterStatus').value = activeFilters.status;
+    if (activeFilters.type) document.getElementById('filterType').value = activeFilters.type;
+    filterLeads();
+  }
+}
+
+// ── DRAWER ──
+var currentDrawerLead = null;
+
+function openDrawer(lead) {
+  currentDrawerLead = lead;
+  var score = parseInt(lead['ATTORNEY SCORE']) || 0;
+  var label = lead['SCORE LABEL'] || 'LOW';
+  var scoreColor = label==='HIGH VALUE' ? '#10b981' : label==='MODERATE' ? '#f59e0b' : '#ef4444';
+
+  document.getElementById('drawerTitle').textContent = (lead['Name']||'Lead') + ' · ' + (lead['REF #']||'');
+
+  var html = [
+    '<div class="drawer-score-row" style="border-left:4px solid '+scoreColor+'">',
+    '<div><div class="drawer-score-num" style="color:'+scoreColor+'">'+score+'</div>',
+    '<div class="drawer-score-lbl" style="color:'+scoreColor+'">'+label+'</div></div>',
+    '<div style="text-align:right">',
+    '<div style="font-size:11px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Damage Est.</div>',
+    '<div style="font-size:18px;font-weight:800;color:var(--text)">'+(lead['Damage Estimate']||'—')+'</div>',
+    '</div></div>',
+
+    // Claimant
+    section('Claimant Information', [
+      field('Name', lead['Name']),
+      field('Phone', lead['Phone']),
+      field('Email', lead['Email'], true),
+      field('State', lead['State']),
+      field('REF #', lead['REF #']),
+      field('Submitted', lead['Timestamp'] ? new Date(lead['Timestamp']).toLocaleString() : '—', true),
+    ]),
+
+    // Accident
+    section('Accident Details', [
+      field('Date', lead['Accident Date']),
+      field('Days Since', (lead['Days Since']||'—') + ' days'),
+      field('Type', lead['Accident Type']),
+      field('At Fault', lead['At Fault']),
+      field('Police Report', lead['Police Report']),
+    ]),
+
+    // Injuries
+    section('Injuries & Medical', [
+      field('Severity', lead['Injury Severity'], true),
+      field('Injuries', lead['Injuries'], true),
+      field('Sought Medical', lead['Sought Medical']),
+      field('Facility', lead['Medical Facility']),
+      field('Hospitalized', lead['Hospitalized']),
+      field('Missed Work', lead['Missed Work']),
+    ]),
+
+    // Impact
+    lead['Injury Description'] ? [
+      '<div class="drawer-section">',
+      '<div class="drawer-section-title">Impact Statement</div>',
+      '<div style="background:var(--bg3);border-radius:8px;padding:12px;font-size:13px;color:var(--text);line-height:1.7;">',
+      escH(lead['Injury Description']),
+      '</div></div>'
+    ].join('') : '',
+
+    // Insurance
+    section('Insurance & Liability', [
+      field('Has Insurance', lead['Has Insurance']),
+      field('Insurer', lead['Insurer']||'—'),
+      field('Other Driver Ins', lead['Other Driver Insured']),
+      field('Claim Filed', lead['Claim Filed']),
+      field('Settlement Offered', lead['Settlement Offered']),
+      field('Has Attorney', lead['Has Attorney']),
+    ]),
+
+    // Case management
+    '<div class="drawer-section">',
+    '<div class="drawer-section-title">Case Management</div>',
+    '<select class="drawer-select" id="drawerStatus">',
+    ['New','Contacted','Qualified','Sent to Attorney','Closed - Won','Closed - Lost','Duplicate'].map(function(s) {
+      return '<option'+(lead['Status']===s?' selected':'')+'>'+s+'</option>';
+    }).join(''),
+    '</select>',
+    '<textarea class="drawer-textarea" id="drawerNotes" placeholder="Add notes...">'+(lead['Notes']||'')+'</textarea>',
+    '<div style="margin-top:10px;">',
+    '<button class="drawer-save-btn" onclick="saveLead()">Save Changes</button>',
+    '</div></div>',
+
+    '<div style="display:flex;gap:8px;margin-top:12px;">',
+    '<a href="tel:'+escH(lead['Phone']||'')+'" class="drawer-save-btn" style="flex:1;text-decoration:none;text-align:center;background:var(--bg3);color:var(--text);border:1px solid var(--border);">📞 Call</a>',
+    '<a href="mailto:'+escH(lead['Email']||'')+'" class="drawer-save-btn" style="flex:1;text-decoration:none;text-align:center;background:var(--bg3);color:var(--text);border:1px solid var(--border);">✉️ Email</a>',
+    '</div>',
+  ].join('');
+
+  document.getElementById('drawerBody').innerHTML = html;
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+  currentDrawerLead = null;
+}
+
+function saveLead() {
+  if (!currentDrawerLead || !SCRIPT_URL) return;
+  var status = document.getElementById('drawerStatus').value;
+  var notes  = document.getElementById('drawerNotes').value;
+  var ref    = currentDrawerLead['REF #'];
+
+  fetch(SCRIPT_URL + '?action=update_lead&ref='+encodeURIComponent(ref)+'&status='+encodeURIComponent(status)+'&notes='+encodeURIComponent(notes))
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) {
+        showToast('Lead updated!', 'success');
+        // Update local state
+        var lead = allLeads.find(l => l['REF #']===ref);
+        if (lead) { lead['Status']=status; lead['Notes']=notes; }
+        closeDrawer();
+        filterLeads();
+        updateNavCounts();
+      }
+    })
+    .catch(e => showToast('Update failed', 'error'));
+}
+
+// ── DRAWER HELPERS ──
+function section(title, fields) {
+  return '<div class="drawer-section"><div class="drawer-section-title">'+title+'</div><div class="drawer-fields">'+fields.join('')+'</div></div>';
+}
+function field(label, val, wide) {
+  return '<div class="drawer-field'+(wide?' wide':'')+'">'+
+    '<div class="drawer-field-label">'+label+'</div>'+
+    '<div class="drawer-field-val">'+escH(val||'—')+'</div>'+
+  '</div>';
+}
+
+// ── UTILS ──
+function escH(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (type||'');
+  setTimeout(function(){ t.className='toast'; }, 3000);
+}
+</script>
+</body>
+</html>
