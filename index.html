@@ -678,13 +678,12 @@ async function loadLeads() {
   document.getElementById("mainContent").innerHTML=`<div class="loading"><div class="spinner"></div><p>Loading live data from Google Sheets...</p></div>`;
   document.getElementById("lastUpdated").textContent="Refreshing...";
   try {
-    const res=await fetch(APPS_SCRIPT_URL);
+    const res=await fetch(APPS_SCRIPT_URL+'?action=get_leads');
     const json=await res.json();
-    if(!json.success) throw new Error("error");
+    if(json.status!=='success') throw new Error("error");
     allLeads=(json.leads||[]).map(normalizeLead);
     updateStats(); render();
-    const t=new Date(json.updatedAt);
-    document.getElementById("lastUpdated").textContent="Updated "+t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    document.getElementById("lastUpdated").textContent="Updated "+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   } catch(err) {
     document.getElementById("mainContent").innerHTML=`<div class="error-box"><strong>Could not load live data</strong>Apps Script must be deployed as a Web App with "Anyone" access. Showing sample data.</div>`;
     allLeads=getSampleData(); updateStats(); render();
