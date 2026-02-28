@@ -621,6 +621,80 @@ window.onload = function() {
 
 
 // ── DATA LOADING ──
+
+// =============================================================================
+// normalizeLead — maps sheet header variations to exact dashboard field names
+// Handles: old headers, new headers, shifted columns, any naming inconsistency
+// =============================================================================
+function normalizeLead(raw) {
+  // Helper: find value by trying multiple possible key names
+  function get(raw) {
+    var keys = Array.prototype.slice.call(arguments, 1);
+    for (var i = 0; i < keys.length; i++) {
+      if (raw[keys[i]] !== undefined && raw[keys[i]] !== '') return raw[keys[i]];
+    }
+    return '';
+  }
+
+  var lead = {
+    // Identity
+    'Timestamp':           get(raw,'Timestamp'),
+    'REF #':               get(raw,'REF #','REF#','Ref #','ref'),
+    'Name':                get(raw,'Name','name','CLAIMANT NAME','Full Name'),
+    'Phone':               get(raw,'Phone','phone','PHONE','Phone Number'),
+    'Email':               get(raw,'Email','email','EMAIL'),
+    'State':               get(raw,'State','state','STATE'),
+    // Accident
+    'Accident Date':       get(raw,'Accident Date','AccidentDate','accident_date'),
+    'Days Since':          get(raw,'Days Since','DaysSince','days_since'),
+    'Accident Type':       get(raw,'Accident Type','AccidentType','Type'),
+    'At Fault':            get(raw,'At Fault','AtFault','at_fault','Fault'),
+    'Police Report':       get(raw,'Police Report','PoliceReport','Police'),
+    // Injuries
+    'Injury Severity':     get(raw,'Injury Severity','InjurySeverity','Severity'),
+    'Injuries':            get(raw,'Injuries','injuries','INJURIES'),
+    'Sought Medical':      get(raw,'Sought Medical','SoughtMedical','Medical','soughtMedical'),
+    'Medical Facility':    get(raw,'Medical Facility','MedicalFacility','Facility','medicalFacility'),
+    'Hospitalized':        get(raw,'Hospitalized','hospitalized','HOSPITALIZED'),
+    'Missed Work':         get(raw,'Missed Work','MissedWork','missedWork'),
+    'Injury Description':  get(raw,'Injury Description','InjuryDescription','injuryDesc','Impact'),
+    // Insurance
+    'Has Insurance':       get(raw,'Has Insurance','HasInsurance','hasInsurance','Insurance'),
+    'Insurer':             get(raw,'Insurer','insurer','INSURER','Insurance Company'),
+    'Other Driver Insured':get(raw,'Other Driver Insured','OtherDriverInsured','otherInsurance','Other Driver'),
+    'Claim Filed':         get(raw,'Claim Filed','ClaimFiled','claimFiled','Claim'),
+    'Settlement Offered':  get(raw,'Settlement Offered','SettlementOffered','settlementOffered','Settlement'),
+    'Has Attorney':        get(raw,'Has Attorney','HasAttorney','hasAttorney','Attorney'),
+    'Damage Estimate':     get(raw,'Damage Estimate','DamageEstimate','damageEst','Damages','Damage'),
+    // Scoring — handles both old column names and new
+    'ATTORNEY SCORE':      get(raw,'ATTORNEY SCORE','SCORE','Attorney Score','Score','score'),
+    'SCORE LABEL':         get(raw,'SCORE LABEL','TIER','Grade','GRADE','Tier','tier'),
+    'TIER':                get(raw,'TIER','tier','SCORE LABEL','GRADE'),
+    // Status
+    'Status':              get(raw,'Status','status','STATUS') || 'New',
+    'Notes':               get(raw,'Notes','notes','NOTES'),
+  };
+
+  // Convert TIER emoji string to SCORE LABEL if needed
+  var sl = lead['SCORE LABEL'] || '';
+  var sc = parseInt(lead['ATTORNEY SCORE']) || 0;
+  if (!sl || sl === sl.match(/[0-9]+/) ) {
+    // SCORE LABEL is empty or is a number — derive from TIER or score
+    var tier = lead['TIER'] || '';
+    if (tier.includes('Hot') || sc >= 80)       lead['SCORE LABEL'] = 'HIGH VALUE';
+    else if (tier.includes('Warm') || sc >= 60) lead['SCORE LABEL'] = 'MODERATE';
+    else                                         lead['SCORE LABEL'] = 'LOW';
+  } else if (sl.includes('Hot') || sl.includes('hot')) {
+    lead['SCORE LABEL'] = 'HIGH VALUE';
+  } else if (sl.includes('Warm') || sl.includes('warm')) {
+    lead['SCORE LABEL'] = 'MODERATE';
+  } else if (sl.includes('Low') || sl.includes('Priority')) {
+    lead['SCORE LABEL'] = 'LOW';
+  }
+
+  return lead;
+}
+
 function loadData(silent) {
   if (!SCRIPT_URL) return;
   if (!silent) showLoading();
@@ -638,7 +712,7 @@ function loadData(silent) {
     .then(r => r.json())
     .then(d => {
       if (d.status === 'success') {
-        allLeads = d.leads || [];
+        allLeads = (d.leads || []).map(normalizeLead);
         filterLeads();
         updateNavCounts();
         document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
