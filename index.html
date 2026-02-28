@@ -3,198 +3,576 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#f8fafc" id="theme-color">
+<meta name="theme-color" content="#020617" id="theme-color">
 <title>Accident AI | Attorney Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#f8fafc; --bg2:#ffffff; --bg3:#eef2f6;
-  --red:#dc2626; --red-d:#991b1b;
-  --yellow:#eab308; --blue:#2563eb; --blue-d:#1d4ed8;
-  --green:#16a34a; --cyan:#0891b2; --gold:#b45309;
-  --text:#0f172a; --muted:#64748b; --border:#e2e8f0;
-  --hot:#dc2626; --warm:#eab308; --cool:#2563eb;
-  --mono:'JetBrains Mono',monospace;
-  --disp:'Syne',sans-serif;
-  --body:'Manrope',sans-serif;
-  --r:12px;
+  /* Light theme (default) */
+  --bg-light:      #f8fafc;
+  --bg2-light:     #ffffff;
+  --bg3-light:     #eef2f6;
+  --blue-light:    #2563eb;
+  --blue-d-light:  #1d4ed8;
+  --blue-g-light:  rgba(37,99,235,.12);
+  --cyan-light:    #0891b2;
+  --green-light:   #16a34a;
+  --yellow-light:  #eab308;
+  --red-light:     #dc2626;
+  --gold-light:    #b45309;
+  --slate-light:   #cbd5e1;
+  --text-light:    #0f172a;
+  --muted-light:   #64748b;
+  --border-light:  #e2e8f0;
+  --hot-light:     #dc2626;
+  --warm-light:    #eab308;
+  --cool-light:    #2563eb;
+
+  /* Dark theme */
+  --bg-dark:      #020617;
+  --bg2-dark:     #0f172a;
+  --bg3-dark:     #1e293b;
+  --blue-dark:    #3b82f6;
+  --blue-d-dark:  #1d4ed8;
+  --blue-g-dark:  rgba(59,130,246,.18);
+  --cyan-dark:    #06b6d4;
+  --green-dark:   #10b981;
+  --yellow-dark:  #f59e0b;
+  --red-dark:     #ef4444;
+  --gold-dark:    #c8973a;
+  --slate-dark:   #334155;
+  --text-dark:    #f8fafc;
+  --muted-dark:   #64748b;
+  --border-dark:  rgba(51,65,85,.7);
+  --hot-dark:     #ef4444;
+  --warm-dark:    #f59e0b;
+  --cool-dark:    #3b82f6;
+
+  /* Default to light theme */
+  --bg:      var(--bg-light);
+  --bg2:     var(--bg2-light);
+  --bg3:     var(--bg3-light);
+  --blue:    var(--blue-light);
+  --blue-d:  var(--blue-d-light);
+  --blue-g:  var(--blue-g-light);
+  --cyan:    var(--cyan-light);
+  --green:   var(--green-light);
+  --yellow:  var(--yellow-light);
+  --red:     var(--red-light);
+  --gold:    var(--gold-light);
+  --slate:   var(--slate-light);
+  --text:    var(--text-light);
+  --muted:   var(--muted-light);
+  --border:  var(--border-light);
+  --hot:     var(--hot-light);
+  --warm:    var(--warm-light);
+  --cool:    var(--cool-light);
+
+  --mono:    'JetBrains Mono', monospace;
+  --display: 'Syne', sans-serif;
+  --body:    'Manrope', sans-serif;
+  --r:       12px;
 }
+
+/* Dark theme class */
 body.dark-theme {
-  --bg:#020617; --bg2:#0f172a; --bg3:#1e293b;
-  --red:#ef4444; --red-d:#b91c1c;
-  --yellow:#f59e0b; --blue:#3b82f6; --blue-d:#1d4ed8;
-  --green:#10b981; --cyan:#06b6d4; --gold:#c8973a;
-  --text:#f8fafc; --muted:#64748b; --border:rgba(51,65,85,.7);
-  --hot:#ef4444; --warm:#f59e0b; --cool:#3b82f6;
+  --bg:      var(--bg-dark);
+  --bg2:     var(--bg2-dark);
+  --bg3:     var(--bg3-dark);
+  --blue:    var(--blue-dark);
+  --blue-d:  var(--blue-d-dark);
+  --blue-g:  var(--blue-g-dark);
+  --cyan:    var(--cyan-dark);
+  --green:   var(--green-dark);
+  --yellow:  var(--yellow-dark);
+  --red:     var(--red-dark);
+  --gold:    var(--gold-dark);
+  --slate:   var(--slate-dark);
+  --text:    var(--text-dark);
+  --muted:   var(--muted-dark);
+  --border:  var(--border-dark);
+  --hot:     var(--hot-dark);
+  --warm:    var(--warm-dark);
+  --cool:    var(--cool-dark);
 }
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:var(--body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background-color .3s,color .3s;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 8% 12%,rgba(220,38,38,.1) 0%,transparent 42%),radial-gradient(circle at 90% 80%,rgba(239,68,68,.05) 0%,transparent 38%);pointer-events:none;z-index:0;}
-body.dark-theme::before{background:radial-gradient(circle at 8% 12%,rgba(153,27,27,.2) 0%,transparent 42%),radial-gradient(circle at 90% 80%,rgba(239,68,68,.04) 0%,transparent 38%);}
 
-.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 36px;height:64px;display:flex;align-items:center;justify-content:space-between;transition:background-color .3s;}
-body.dark-theme .topbar{background:rgba(2,6,23,.92);}
-.topbar::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red-d),var(--red),#f87171);opacity:.8;}
-.logo{display:flex;align-items:center;gap:12px;}
-.logo-icon{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,var(--red-d),var(--red));display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(220,38,38,.3);font-size:18px;flex-shrink:0;color:#fff;}
-.logo-text{font-family:var(--disp);font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.02em;}
-.logo-sub{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
-.topbar-right{display:flex;align-items:center;gap:12px;}
-.last-updated{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
-.theme-toggle{display:flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border);border-radius:30px;padding:3px;cursor:pointer;transition:all .2s;}
-.theme-toggle:hover{border-color:var(--red);box-shadow:0 0 12px rgba(220,38,38,.15);}
-.theme-option{padding:6px 14px;border-radius:30px;font-family:var(--mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);transition:all .2s;}
-.theme-option.active{background:var(--red);color:#fff;}
-.refresh-btn{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.25);color:var(--red);padding:7px 16px;border-radius:20px;font-family:var(--body);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.03em;}
-.refresh-btn:hover{background:rgba(220,38,38,.18);border-color:var(--red);}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-.stats-row{position:relative;z-index:1;background:rgba(255,255,255,.7);border-bottom:1px solid var(--border);padding:0 36px 22px;display:grid;grid-template-columns:repeat(5,1fr);transition:background-color .3s;}
-body.dark-theme .stats-row{background:rgba(15,23,42,.7);}
-.stat-box{text-align:center;padding:10px 0;border-right:1px solid var(--border);}
-.stat-box:last-child{border:none;}
-.stat-num{font-family:var(--disp);font-size:34px;font-weight:800;color:var(--text);line-height:1;}
-.stat-num.red-c {color:var(--red);  text-shadow:0 0 20px rgba(220,38,38,.4);}
-.stat-num.warm-c{color:var(--yellow);text-shadow:0 0 20px rgba(234,179,8,.3);}
-.stat-num.gold-c{color:var(--gold); text-shadow:0 0 20px rgba(180,83,9,.3);}
-.stat-num.blue-c{color:var(--blue); text-shadow:0 0 20px rgba(37,99,235,.4);}
-.stat-lbl{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-top:5px;}
+/* Background gradients adapt to theme */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(circle at 8% 12%, rgba(37,99,235,.15) 0%, transparent 42%),
+    radial-gradient(circle at 90% 80%, rgba(8,145,178,.08) 0%, transparent 38%);
+  pointer-events:none; z-index:0;
+  transition: opacity 0.3s ease;
+}
+body.dark-theme::before {
+  background:
+    radial-gradient(circle at 8% 12%, rgba(30,58,138,.25) 0%, transparent 42%),
+    radial-gradient(circle at 90% 80%, rgba(6,182,212,.06) 0%, transparent 38%);
+}
 
-.toolbar{position:relative;z-index:1;padding:14px 36px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:rgba(255,255,255,.5);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);transition:background-color .3s;}
-body.dark-theme .toolbar{background:rgba(15,23,42,.5);}
-.pill{padding:6px 16px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--body);border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .15s;letter-spacing:.03em;text-transform:uppercase;}
-.pill:hover,.pill.on{border-color:var(--red);color:var(--red);background:rgba(220,38,38,.08);}
-.pill.hot-pill.on {border-color:var(--red);   color:var(--red);   background:rgba(220,38,38,.1);}
-.pill.warm-pill.on{border-color:var(--yellow); color:var(--yellow);background:rgba(234,179,8,.1);}
-.pill.cool-pill.on{border-color:var(--blue);   color:var(--blue);  background:rgba(37,99,235,.08);}
-.search{margin-left:auto;padding:8px 16px 8px 36px;border-radius:20px;border:1px solid var(--border);background:var(--bg2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 12px center;color:var(--text);font-family:var(--body);font-size:13px;width:260px;outline:none;transition:border-color .15s,background-color .3s;}
-.search::placeholder{color:var(--muted);}
-.search:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(220,38,38,.1);}
+/* THEME TOGGLE */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 3px;
+  margin-right: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.theme-toggle:hover {
+  border-color: var(--blue);
+  box-shadow: 0 0 12px var(--blue-g);
+}
+.theme-option {
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  transition: all 0.2s ease;
+}
+.theme-option.active {
+  background: var(--blue);
+  color: white;
+}
 
-.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:16px;position:relative;z-index:1;}
-.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;box-shadow:0 0 14px rgba(220,38,38,.15);}
-@keyframes spin{to{transform:rotate(360deg);}}
-.loading p{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
-.error-box{margin:30px 36px;position:relative;z-index:1;background:rgba(220,38,38,.07);border:1px solid rgba(220,38,38,.25);border-radius:var(--r);padding:20px 24px;font-size:13px;color:#b91c1c;}
-body.dark-theme .error-box{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.25);color:#fca5a5;}
-.error-box strong{display:block;margin-bottom:6px;font-size:14px;color:var(--red);}
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky; top:0; z-index:50;
+  background: rgba(255,255,255,.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 36px;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background-color 0.3s ease;
+}
+body.dark-theme .topbar {
+  background: rgba(2,6,23,.92);
+}
+.topbar::after {
+  content:'';
+  position:absolute; bottom:-1px; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, var(--blue), var(--cyan), var(--blue));
+  opacity:.7;
+}
+.logo { display:flex; align-items:center; gap:12px; }
+.logo-icon {
+  width:38px; height:38px; border-radius:8px;
+  background: linear-gradient(135deg, var(--blue-d), var(--blue));
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 0 16px var(--blue-g);
+  font-size:18px; flex-shrink:0; color:white;
+}
+.logo-text {
+  font-family: var(--display);
+  font-size: 17px; font-weight:800;
+  color: var(--text);
+  letter-spacing:-.02em;
+}
+.logo-sub {
+  font-family: var(--mono);
+  font-size:9px; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.1em;
+  margin-top:2px;
+}
+.topbar-right { display:flex; align-items:center; gap:12px; }
+.last-updated {
+  font-family:var(--mono); font-size:10px;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.08em;
+}
+.refresh-btn {
+  background: rgba(37,99,235,.1);
+  border: 1px solid rgba(37,99,235,.3);
+  color: var(--blue);
+  padding: 7px 16px; border-radius:20px;
+  font-family:var(--body); font-size:12px; font-weight:700;
+  cursor:pointer; transition:all .2s;
+  letter-spacing:.03em;
+}
+body.dark-theme .refresh-btn {
+  background: rgba(59,130,246,.12);
+  border: 1px solid rgba(59,130,246,.3);
+}
+.refresh-btn:hover { background:rgba(37,99,235,.2); border-color:var(--blue); color:var(--text); }
+body.dark-theme .refresh-btn:hover { background:rgba(59,130,246,.22); color:#fff; }
 
-.grid{padding:24px 36px;display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;position:relative;z-index:1;}
-.empty{grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;}
+/* ── STATS ROW ── */
+.stats-row {
+  position:relative; z-index:1;
+  background: rgba(255,255,255,.7);
+  border-bottom: 1px solid var(--border);
+  padding: 0 36px 22px;
+  display: grid;
+  grid-template-columns: repeat(5,1fr);
+  transition: background-color 0.3s ease;
+}
+body.dark-theme .stats-row {
+  background: rgba(15,23,42,.7);
+}
+.stat-box {
+  text-align:center; padding:10px 0;
+  border-right:1px solid var(--border);
+  position:relative;
+}
+.stat-box:last-child { border:none; }
+.stat-num {
+  font-family: var(--display);
+  font-size:34px; font-weight:800;
+  color:var(--text); line-height:1;
+}
+.stat-num.hot-c  { color: var(--red); text-shadow:0 0 20px rgba(220,38,38,.4); }
+body.dark-theme .stat-num.hot-c { text-shadow:0 0 20px rgba(239,68,68,.4); }
+.stat-num.warm-c { color: var(--yellow); text-shadow:0 0 20px rgba(234,179,8,.3); }
+body.dark-theme .stat-num.warm-c { text-shadow:0 0 20px rgba(245,158,11,.3); }
+.stat-num.gold-c { color: var(--gold); text-shadow:0 0 20px rgba(180,83,9,.3); }
+body.dark-theme .stat-num.gold-c { text-shadow:0 0 20px rgba(200,151,58,.3); }
+.stat-num.blue-c { color: var(--blue); text-shadow:0 0 20px rgba(37,99,235,.4); }
+body.dark-theme .stat-num.blue-c { text-shadow:0 0 20px rgba(59,130,246,.4); }
+.stat-lbl {
+  font-family:var(--mono); font-size:9px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.12em;
+  color:var(--muted); margin-top:5px;
+}
 
-.card{background:rgba(255,255,255,.88);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s,background-color .3s;}
-body.dark-theme .card{background:rgba(15,23,42,.88);}
-.card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,.1),0 0 0 1px rgba(220,38,38,.2);border-color:rgba(220,38,38,.3);}
-body.dark-theme .card:hover{box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 0 1px rgba(239,68,68,.2);}
-.card-stripe{height:3px;}
-.hot-stripe {background:linear-gradient(90deg,#991b1b,var(--red),#f87171);box-shadow:0 0 8px rgba(220,38,38,.6);}
-.warm-stripe{background:linear-gradient(90deg,#b45309,var(--yellow),#fcd34d);box-shadow:0 0 8px rgba(234,179,8,.5);}
-.cool-stripe{background:linear-gradient(90deg,var(--blue-d),var(--blue),var(--cyan));box-shadow:0 0 8px rgba(37,99,235,.4);}
-.card-body{padding:16px 16px 12px;}
-.card-row1{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
-.card-name{font-family:var(--disp);font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.01em;}
-.card-meta-sub{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:.06em;}
+/* ── TOOLBAR ── */
+.toolbar {
+  position:relative; z-index:1;
+  padding: 14px 36px;
+  display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+  background: rgba(255,255,255,.5);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter:blur(10px);
+  transition: background-color 0.3s ease;
+}
+body.dark-theme .toolbar {
+  background: rgba(15,23,42,.5);
+}
+.pill {
+  padding:6px 16px; border-radius:20px;
+  font-size:11px; font-weight:700;
+  cursor:pointer; font-family:var(--body);
+  border:1px solid var(--border);
+  background:transparent; color:var(--muted);
+  transition:all .15s; letter-spacing:.03em;
+  text-transform:uppercase;
+}
+.pill:hover,.pill.on { border-color:var(--blue); color:var(--blue); background:rgba(37,99,235,.08); }
+body.dark-theme .pill:hover, body.dark-theme .pill.on { background:rgba(59,130,246,.1); }
+.pill.hot-pill.on  { border-color:var(--red);    color:var(--red);    background:rgba(220,38,38,.1); }
+body.dark-theme .pill.hot-pill.on { background:rgba(239,68,68,.1); }
+.pill.warm-pill.on { border-color:var(--yellow);  color:var(--yellow); background:rgba(234,179,8,.1); }
+body.dark-theme .pill.warm-pill.on { background:rgba(245,158,11,.1); }
+.pill.cool-pill.on { border-color:var(--cool);   color:var(--cool);   background:rgba(37,99,235,.08); }
+body.dark-theme .pill.cool-pill.on { background:rgba(59,130,246,.08); }
 
-.ring-wrap{position:relative;width:54px;height:54px;flex-shrink:0;}
-.ring-wrap svg{position:absolute;top:0;left:0;transform:rotate(-90deg);}
-.ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.ring-num{font-family:var(--disp);font-size:14px;font-weight:800;line-height:1;}
-.ring-lbl{font-family:var(--mono);font-size:8px;color:var(--muted);font-weight:500;margin-top:1px;}
+.search {
+  margin-left:auto;
+  padding:8px 16px 8px 36px; border-radius:20px;
+  border:1px solid var(--border);
+  background: var(--bg2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 12px center;
+  color:var(--text); font-family:var(--body); font-size:13px;
+  width:240px; outline:none;
+  transition:border-color .15s, background-color 0.3s ease;
+}
+.search::placeholder { color:var(--muted); }
+.search:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(37,99,235,.12); }
+body.dark-theme .search:focus { box-shadow:0 0 0 3px rgba(59,130,246,.12); }
 
-.injury-tag{display:inline-block;background:rgba(220,38,38,.07);border:1px solid rgba(220,38,38,.18);color:var(--red);font-family:var(--mono);font-size:10px;font-weight:500;padding:3px 9px;border-radius:4px;margin-bottom:10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.04em;text-transform:uppercase;}
-body.dark-theme .injury-tag{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.2);color:#fca5a5;}
+/* ── LOADING ── */
+.loading {
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; padding:80px 20px; gap:16px;
+  position:relative; z-index:1;
+}
+.spinner {
+  width:40px; height:40px;
+  border:3px solid var(--border);
+  border-top-color:var(--blue);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  box-shadow:0 0 14px var(--blue-g);
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading p { font-family:var(--mono); font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
 
-.tier-tag{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em;}
-.tier-tag.hot {background:rgba(220,38,38,.1); border:1px solid rgba(220,38,38,.25); color:#b91c1c;}
-.tier-tag.warm{background:rgba(234,179,8,.1); border:1px solid rgba(234,179,8,.25); color:#b45309;}
-.tier-tag.cool{background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.2);  color:var(--blue);}
-body.dark-theme .tier-tag.hot {background:rgba(239,68,68,.1); border-color:rgba(239,68,68,.25); color:#fca5a5;}
-body.dark-theme .tier-tag.warm{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25);color:#fcd34d;}
-body.dark-theme .tier-tag.cool{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.25);color:#93c5fd;}
+/* ── ERROR ── */
+.error-box {
+  margin:30px 36px; position:relative; z-index:1;
+  background:rgba(220,38,38,.07);
+  border:1px solid rgba(220,38,38,.25);
+  border-radius:var(--r); padding:20px 24px;
+  font-size:13px; color:#b91c1c;
+}
+body.dark-theme .error-box {
+  background:rgba(239,68,68,.07);
+  border:1px solid rgba(239,68,68,.25);
+  color:#fca5a5;
+}
+.error-box strong { display:block; margin-bottom:6px; font-size:14px; color:var(--red); }
 
-.card-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
-.info-cell{font-size:10px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;}
-.info-cell strong{display:block;font-family:var(--body);font-size:12px;color:var(--text);font-weight:700;margin-top:2px;text-transform:none;letter-spacing:0;}
+/* ── GRID ── */
+.grid {
+  padding:24px 36px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(330px,1fr));
+  gap:16px;
+  position:relative; z-index:1;
+}
+.empty {
+  grid-column:1/-1; text-align:center; padding:60px;
+  color:var(--muted); font-family:var(--mono);
+  font-size:11px; text-transform:uppercase; letter-spacing:.1em;
+}
 
-.factor-chips{display:flex;flex-wrap:wrap;gap:4px;padding:10px 0 0;border-top:1px solid var(--border);}
-.chip{font-family:var(--mono);font-size:9px;font-weight:600;padding:2px 8px;border-radius:4px;background:var(--bg3);color:var(--text);border:1px solid var(--border);letter-spacing:.04em;}
-.chip.warn{background:rgba(220,38,38,.1);color:var(--red);border-color:rgba(220,38,38,.2);}
-body.dark-theme .chip.warn{background:rgba(239,68,68,.1);color:#fca5a5;border-color:rgba(239,68,68,.2);}
+/* ── CARD ── */
+.card {
+  background: rgba(255,255,255,.85);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden; cursor:pointer;
+  transition:transform .18s, box-shadow .18s, border-color .18s, background-color 0.3s ease;
+  position:relative;
+}
+body.dark-theme .card {
+  background: rgba(15,23,42,.85);
+}
+.card:hover {
+  transform:translateY(-4px);
+  box-shadow:0 20px 50px rgba(0,0,0,.1), 0 0 0 1px rgba(37,99,235,.2);
+  border-color:rgba(37,99,235,.3);
+}
+body.dark-theme .card:hover {
+  box-shadow:0 20px 50px rgba(0,0,0,.5), 0 0 0 1px rgba(59,130,246,.2);
+}
+.card-stripe { height:3px; }
+.hot-stripe  { background:linear-gradient(90deg,#b91c1c,var(--red),#f87171); box-shadow:0 0 8px rgba(220,38,38,.6); }
+body.dark-theme .hot-stripe { box-shadow:0 0 8px rgba(239,68,68,.6); }
+.warm-stripe { background:linear-gradient(90deg,#b45309,var(--yellow),#fcd34d); box-shadow:0 0 8px rgba(234,179,8,.5); }
+body.dark-theme .warm-stripe { box-shadow:0 0 8px rgba(245,158,11,.5); }
+.cool-stripe { background:linear-gradient(90deg,var(--blue-d),var(--blue),var(--cyan)); box-shadow:0 0 8px rgba(37,99,235,.4); }
+body.dark-theme .cool-stripe { box-shadow:0 0 8px rgba(59,130,246,.4); }
 
-.card-footer{display:flex;gap:8px;padding:10px 16px 14px;border-top:1px solid var(--border);}
-.btn{flex:1;padding:8px;border-radius:8px;font-family:var(--body);font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s;letter-spacing:.02em;}
-.btn-p{background:var(--red-d);color:#fff;box-shadow:0 2px 8px rgba(153,27,27,.35);}
-.btn-p:hover{background:var(--red);box-shadow:0 4px 14px rgba(220,38,38,.4);}
-.btn-o{background:transparent;border:1px solid var(--border);color:var(--muted);}
-.btn-o:hover{border-color:var(--red);color:var(--red);}
+.card-body { padding:16px 16px 12px; }
+.card-row1 { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+.card-name { font-family:var(--display); font-size:15px; font-weight:800; color:var(--text); letter-spacing:-.01em; }
+.card-meta-sub { font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:3px; letter-spacing:.06em; }
 
-.overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.8);backdrop-filter:blur(8px);z-index:200;align-items:center;justify-content:center;padding:20px;}
-body.dark-theme .overlay{background:rgba(2,6,23,.8);}
-.overlay.open{display:flex;animation:fadeIn .2s ease;}
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,.2),0 0 0 1px rgba(220,38,38,.12);animation:slideUp .25s cubic-bezier(.4,0,.2,1);}
-body.dark-theme .modal{box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 0 1px rgba(239,68,68,.12);}
-@keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-.modal-header{background:rgba(255,255,255,.95);padding:22px 26px 18px;border-radius:16px 16px 0 0;border-bottom:1px solid var(--border);position:relative;}
-body.dark-theme .modal-header{background:rgba(15,23,42,.95);}
-.modal-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red-d),var(--red),#f87171);}
-.modal-header h2{font-family:var(--disp);font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.02em;}
-.modal-header p{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:4px;letter-spacing:.08em;text-transform:uppercase;}
-.mclose{position:absolute;top:16px;right:18px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);width:28px;height:28px;border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-.mclose:hover{background:rgba(220,38,38,.15);border-color:var(--red);color:var(--red);}
-.modal-body{padding:22px 26px;}
+/* Score ring */
+.ring-wrap { position:relative; width:54px; height:54px; flex-shrink:0; }
+.ring-wrap svg { position:absolute; top:0; left:0; transform:rotate(-90deg); }
+.ring-inner { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.ring-num { font-family:var(--display); font-size:14px; font-weight:800; line-height:1; }
+.ring-lbl { font-family:var(--mono); font-size:8px; color:var(--muted); font-weight:500; margin-top:1px; }
 
-.score-hero{display:flex;align-items:center;gap:20px;background:rgba(255,255,255,.6);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px;}
-body.dark-theme .score-hero{background:rgba(2,6,23,.6);}
-.score-big{font-family:var(--disp);font-size:52px;line-height:1;font-weight:800;}
-.score-grade{font-family:var(--mono);font-size:20px;font-weight:700;margin-top:4px;letter-spacing:.05em;}
-.score-bar-wrap{flex:1;}
-.score-bar-label{font-family:var(--mono);font-size:9px;color:var(--muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em;}
-.bar-bg{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;}
-.bar-fill{height:100%;border-radius:5px;transition:width .6s ease;}
-.score-desc{font-size:11px;color:var(--muted);margin-top:6px;font-family:var(--mono);letter-spacing:.04em;}
+.condition-tag {
+  display:inline-block;
+  background:rgba(37,99,235,.08);
+  border:1px solid rgba(37,99,235,.2);
+  color:var(--blue);
+  font-family:var(--mono); font-size:10px; font-weight:500;
+  padding:3px 9px; border-radius:4px;
+  margin-bottom:10px;
+  max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  letter-spacing:.04em; text-transform:uppercase;
+}
+body.dark-theme .condition-tag {
+  background:rgba(59,130,246,.1);
+  border:1px solid rgba(59,130,246,.2);
+  color:#93c5fd;
+}
 
-.msect{margin-bottom:18px;}
-.msect-title{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.ditem{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
-.ditem strong{display:block;font-family:var(--body);font-size:13px;color:var(--text);font-weight:700;margin-top:2px;text-transform:none;letter-spacing:0;}
+.tier-tag {
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:var(--mono); font-size:10px; font-weight:700;
+  padding:4px 10px; border-radius:20px;
+  margin-bottom:10px; text-transform:uppercase; letter-spacing:.06em;
+}
+.tier-tag.hot  { background:rgba(220,38,38,.1);  border:1px solid rgba(220,38,38,.25);  color:#b91c1c; }
+body.dark-theme .tier-tag.hot { background:rgba(239,68,68,.1);  border:1px solid rgba(239,68,68,.25);  color:#fca5a5; }
+.tier-tag.warm { background:rgba(234,179,8,.1); border:1px solid rgba(234,179,8,.25); color:#b45309; }
+body.dark-theme .tier-tag.warm { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:#fcd34d; }
+.tier-tag.cool { background:rgba(37,99,235,.08); border:1px solid rgba(37,99,235,.2); color:var(--blue); }
+body.dark-theme .tier-tag.cool { background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.25); color:#93c5fd; }
 
-.factor-list{list-style:none;}
-.factor-list li{display:flex;align-items:flex-start;gap:8px;font-size:12px;padding:7px 0;border-bottom:1px solid var(--border);color:var(--text);}
-body.dark-theme .factor-list li{color:#cbd5e1;}
-.factor-list li:last-child{border:none;}
-.fi{font-size:13px;flex-shrink:0;margin-top:1px;}
-.impact-box{font-size:13px;color:var(--text);line-height:1.7;background:rgba(255,255,255,.6);border:1px solid var(--border);padding:12px 14px;border-radius:8px;}
-body.dark-theme .impact-box{background:rgba(2,6,23,.6);color:#94a3b8;}
-.modal-actions{display:flex;gap:10px;margin-top:18px;}
-.modal-actions .btn{padding:12px;font-size:13px;}
+.card-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:12px; }
+.info-cell { font-size:10px; color:var(--muted); font-family:var(--mono); text-transform:uppercase; letter-spacing:.06em; }
+.info-cell strong { display:block; font-family:var(--body); font-size:12px; color:var(--text); font-weight:700; margin-top:2px; text-transform:none; letter-spacing:0; }
 
-.urgency-hot {background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-family:var(--mono);font-size:11px;color:var(--red);font-weight:600;}
-.urgency-warn{background:rgba(234,179,8,.08); border:1px solid rgba(234,179,8,.2); border-radius:8px;padding:10px 14px;margin-bottom:16px;font-family:var(--mono);font-size:11px;color:#b45309;font-weight:600;}
-.urgency-ok  {background:rgba(22,163,74,.08); border:1px solid rgba(22,163,74,.2); border-radius:8px;padding:10px 14px;margin-bottom:16px;font-family:var(--mono);font-size:11px;color:#15803d;font-weight:600;}
-body.dark-theme .urgency-warn{color:#fcd34d;}
-body.dark-theme .urgency-ok{color:#6ee7b7;}
+.factor-chips { display:flex; flex-wrap:wrap; gap:4px; padding:10px 0 0; border-top:1px solid var(--border); }
+.chip {
+  font-family:var(--mono); font-size:9px; font-weight:600;
+  padding:2px 8px; border-radius:4px;
+  background:var(--bg3); color:var(--text);
+  border:1px solid var(--border); letter-spacing:.04em;
+}
+.chip.warn { background:rgba(220,38,38,.1); color:var(--red); border-color:rgba(220,38,38,.2); }
+body.dark-theme .chip.warn { background:rgba(239,68,68,.1); color:#fca5a5; border-color:rgba(239,68,68,.2); }
 
-@media(max-width:640px){
-  .topbar,.toolbar{padding-left:16px;padding-right:16px;}
-  .stats-row{padding:0 16px 16px;grid-template-columns:repeat(3,1fr);}
-  .grid{padding:16px;}
-  .search{width:100%;}
-  .modal-body{padding:16px;}
+.card-footer {
+  display:flex; gap:8px;
+  padding:10px 16px 14px;
+  border-top:1px solid var(--border);
+}
+.btn { flex:1; padding:8px; border-radius:8px; font-family:var(--body); font-size:12px; font-weight:700; cursor:pointer; border:none; transition:all .15s; letter-spacing:.02em; }
+.btn-p { background:var(--blue-d); color:#fff; box-shadow:0 2px 8px rgba(29,78,216,.35); }
+.btn-p:hover { background:var(--blue); box-shadow:0 4px 14px rgba(37,99,235,.4); }
+body.dark-theme .btn-p { box-shadow:0 2px 8px rgba(29,78,216,.35); }
+body.dark-theme .btn-p:hover { box-shadow:0 4px 14px rgba(59,130,246,.4); }
+.btn-o { background:transparent; border:1px solid var(--border); color:var(--muted); }
+.btn-o:hover { border-color:var(--blue); color:var(--blue); }
+
+/* ── MODAL ── */
+.overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(255,255,255,.8);
+  backdrop-filter:blur(8px);
+  z-index:200; align-items:center; justify-content:center; padding:20px;
+}
+body.dark-theme .overlay {
+  background:rgba(2,6,23,.8);
+}
+.overlay.open { display:flex; animation:fadeIn .2s ease; }
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+.modal {
+  background: var(--bg2);
+  border:1px solid var(--border);
+  border-radius:16px;
+  max-width:580px; width:100%;
+  max-height:90vh; overflow-y:auto;
+  box-shadow:0 40px 100px rgba(0,0,0,.2), 0 0 0 1px rgba(37,99,235,.15);
+  position:relative;
+  animation:slideUp .25s cubic-bezier(.4,0,.2,1);
+}
+body.dark-theme .modal {
+  box-shadow:0 40px 100px rgba(0,0,0,.6), 0 0 0 1px rgba(59,130,246,.15);
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+.modal-header {
+  background: rgba(255,255,255,.95);
+  padding:22px 26px 18px;
+  border-radius:16px 16px 0 0;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+body.dark-theme .modal-header {
+  background: rgba(15,23,42,.95);
+}
+.modal-header::after {
+  content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+  border-radius:0 0 2px 2px;
+}
+.modal-header h2 { font-family:var(--display); font-size:20px; font-weight:800; color:var(--text); letter-spacing:-.02em; }
+.modal-header p  { font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:4px; letter-spacing:.08em; text-transform:uppercase; }
+.mclose {
+  position:absolute; top:16px; right:18px;
+  background:var(--bg3); border:1px solid var(--border); color:var(--muted);
+  width:28px; height:28px; border-radius:50%;
+  font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all .15s;
+}
+.mclose:hover { background:rgba(220,38,38,.15); border-color:var(--red); color:var(--red); }
+body.dark-theme .mclose:hover { background:rgba(239,68,68,.15); }
+.modal-body { padding:22px 26px; }
+
+.score-hero {
+  display:flex; align-items:center; gap:20px;
+  background:rgba(255,255,255,.6);
+  border:1px solid var(--border);
+  border-radius:10px; padding:16px; margin-bottom:20px;
+}
+body.dark-theme .score-hero {
+  background:rgba(2,6,23,.6);
+}
+.score-big { font-family:var(--display); font-size:52px; line-height:1; font-weight:800; }
+.score-grade { font-family:var(--mono); font-size:20px; font-weight:700; margin-top:4px; letter-spacing:.05em; }
+.score-bar-wrap { flex:1; }
+.score-bar-label { font-family:var(--mono); font-size:9px; color:var(--muted); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:.1em; }
+.bar-bg { height:10px; background:var(--bg3); border-radius:5px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:5px; transition:width .6s ease; }
+.score-desc { font-size:11px; color:var(--muted); margin-top:6px; font-family:var(--mono); letter-spacing:.04em; }
+
+.msect { margin-bottom:18px; }
+.msect-title {
+  font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--blue);
+  margin-bottom:10px; padding-bottom:6px;
+  border-bottom:1px solid var(--border);
+}
+.detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.ditem { font-family:var(--mono); font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+.ditem strong { display:block; font-family:var(--body); font-size:13px; color:var(--text); font-weight:700; margin-top:2px; text-transform:none; letter-spacing:0; }
+
+.factor-list { list-style:none; }
+.factor-list li {
+  display:flex; align-items:flex-start; gap:8px;
+  font-size:12px; padding:7px 0;
+  border-bottom:1px solid var(--border);
+  color:var(--text);
+}
+body.dark-theme .factor-list li { color:#cbd5e1; }
+.factor-list li:last-child { border:none; }
+.fi { font-size:13px; flex-shrink:0; margin-top:1px; }
+
+.impact-box {
+  font-size:13px; color:var(--text); line-height:1.7;
+  background:rgba(255,255,255,.6); border:1px solid var(--border);
+  padding:12px 14px; border-radius:8px;
+}
+body.dark-theme .impact-box {
+  background:rgba(2,6,23,.6);
+  color:#94a3b8;
+}
+
+.modal-actions { display:flex; gap:10px; margin-top:18px; }
+.modal-actions .btn { padding:12px; font-size:13px; }
+
+@media(max-width:640px) {
+  .topbar { padding:0 16px; }
+  .stats-row { grid-template-columns:repeat(3,1fr); padding:0 16px 16px; }
+  .toolbar { padding:12px 16px; }
+  .grid { padding:16px; }
+  .search { width:100%; }
+  .modal-body { padding:16px; }
 }
 </style>
 </head>
 <body>
 
+<!-- TOPBAR WITH THEME TOGGLE -->
 <div class="topbar">
   <div class="logo">
-    <div class="logo-icon">⚖️</div>
+    <div class="logo-icon">🚗</div>
     <div>
       <div class="logo-text">Accident AI</div>
       <div class="logo-sub">Attorney Dashboard &mdash; Confidential</div>
     </div>
   </div>
   <div class="topbar-right">
+    <!-- THEME TOGGLE SWITCH -->
     <div class="theme-toggle" onclick="toggleTheme()">
       <span class="theme-option light active" id="theme-light">☀️ Light</span>
       <span class="theme-option dark" id="theme-dark">🌙 Dark</span>
@@ -204,252 +582,334 @@ body.dark-theme .urgency-ok{color:#6ee7b7;}
   </div>
 </div>
 
+<!-- STATS -->
 <div class="stats-row">
-  <div class="stat-box"><div class="stat-num blue-c" id="s-total">—</div><div class="stat-lbl">Total Leads</div></div>
-  <div class="stat-box"><div class="stat-num red-c"  id="s-hot">—</div><div class="stat-lbl">High Value</div></div>
-  <div class="stat-box"><div class="stat-num warm-c" id="s-warm">—</div><div class="stat-lbl">Moderate</div></div>
-  <div class="stat-box"><div class="stat-num gold-c" id="s-avg">—</div><div class="stat-lbl">Avg Score</div></div>
-  <div class="stat-box"><div class="stat-num"        id="s-top">—</div><div class="stat-lbl">Top Score</div></div>
+  <div class="stat-box">
+    <div class="stat-num blue-c" id="s-total">—</div>
+    <div class="stat-lbl">Total Leads</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num hot-c" id="s-hot">—</div>
+    <div class="stat-lbl">High Value</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num warm-c" id="s-warm">—</div>
+    <div class="stat-lbl">Moderate</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num gold-c" id="s-avg">—</div>
+    <div class="stat-lbl">Avg Score</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num" id="s-top" style="color:var(--text)">—</div>
+    <div class="stat-lbl">Top Score</div>
+  </div>
 </div>
 
+<!-- TOOLBAR -->
 <div class="toolbar">
-  <button class="pill on"        onclick="setFilter(this,'all')">All Leads</button>
-  <button class="pill hot-pill"  onclick="setFilter(this,'hot')">High Value</button>
+  <button class="pill on" onclick="setFilter(this,'all')">All Leads</button>
+  <button class="pill hot-pill" onclick="setFilter(this,'hot')">High Value</button>
   <button class="pill warm-pill" onclick="setFilter(this,'warm')">Moderate</button>
   <button class="pill cool-pill" onclick="setFilter(this,'cool')">Low Priority</button>
   <input class="search" id="searchBox" placeholder="Search name, injury, state, type..." oninput="render()">
 </div>
 
+<!-- MAIN -->
 <div id="mainContent">
-  <div class="loading"><div class="spinner"></div><p>Loading live data from Google Sheets...</p></div>
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>Loading live data from Google Sheets...</p>
+  </div>
 </div>
 
+<!-- MODAL -->
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="modal-header">
       <button class="mclose" onclick="closeModal()">&#10005;</button>
       <h2 id="mName">—</h2>
-      <p  id="mSub">—</p>
+      <p id="mSub">—</p>
     </div>
     <div class="modal-body" id="mBody"></div>
   </div>
 </div>
 
 <script>
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxs8vw-jadNBh6SOq_uPdz6mMPGXQvoeMGoW7ZGbPbKTaBG1xvrvmST6Pmoc7NLtNM/exec";
-let allLeads = [], curFilter = "all";
-
-// ── THEME ─────────────────────────────────────────────────────────────────────
+// ===== THEME TOGGLE FUNCTIONALITY =====
 function toggleTheme() {
-  document.body.classList.toggle('dark-theme');
-  const dark = document.body.classList.contains('dark-theme');
-  document.getElementById('theme-light').classList.toggle('active',!dark);
-  document.getElementById('theme-dark').classList.toggle('active', dark);
-  document.getElementById('theme-color').setAttribute('content', dark ? '#020617' : '#f8fafc');
-  localStorage.setItem('acc-dash-theme', dark ? 'dark' : 'light');
+  const body = document.body;
+  const lightOption = document.getElementById('theme-light');
+  const darkOption = document.getElementById('theme-dark');
+  const metaThemeColor = document.getElementById('theme-color');
+
+  body.classList.toggle('dark-theme');
+
+  if (body.classList.contains('dark-theme')) {
+    lightOption.classList.remove('active');
+    darkOption.classList.add('active');
+    metaThemeColor.setAttribute('content', '#020617');
+  } else {
+    lightOption.classList.add('active');
+    darkOption.classList.remove('active');
+    metaThemeColor.setAttribute('content', '#f8fafc');
+  }
+
+  // Save preference to localStorage
+  localStorage.setItem('dashboard-theme', body.classList.contains('dark-theme') ? 'dark' : 'light');
 }
+
+// Load saved theme preference
 function loadThemePreference() {
-  if (localStorage.getItem('acc-dash-theme') === 'dark') {
+  const savedTheme = localStorage.getItem('dashboard-theme');
+  if (savedTheme === 'dark') {
     document.body.classList.add('dark-theme');
     document.getElementById('theme-light').classList.remove('active');
     document.getElementById('theme-dark').classList.add('active');
-    document.getElementById('theme-color').setAttribute('content','#020617');
+    document.getElementById('theme-color').setAttribute('content', '#020617');
   }
 }
 
-// ── NORMALISE ─────────────────────────────────────────────────────────────────
+// ===== DASHBOARD FUNCTIONALITY =====
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxs8vw-jadNBh6SOq_uPdz6mMPGXQvoeMGoW7ZGbPbKTaBG1xvrvmST6Pmoc7NLtNM/exec";
+let allLeads=[], curFilter="all";
+
+async function loadLeads() {
+  document.getElementById("mainContent").innerHTML=`<div class="loading"><div class="spinner"></div><p>Loading live data from Google Sheets...</p></div>`;
+  document.getElementById("lastUpdated").textContent="Refreshing...";
+  try {
+    const res=await fetch(APPS_SCRIPT_URL);
+    const json=await res.json();
+    if(!json.success) throw new Error("error");
+    allLeads=(json.leads||[]).map(normalizeLead);
+    updateStats(); render();
+    const t=new Date(json.updatedAt);
+    document.getElementById("lastUpdated").textContent="Updated "+t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  } catch(err) {
+    document.getElementById("mainContent").innerHTML=`<div class="error-box"><strong>Could not load live data</strong>Apps Script must be deployed as a Web App with "Anyone" access. Showing sample data.</div>`;
+    allLeads=getSampleData(); updateStats(); render();
+    document.getElementById("lastUpdated").textContent="Sample data (offline)";
+  }
+}
+
+function updateStats() {
+  const hot =allLeads.filter(l=>tierKey(l.tier)==="hot").length;
+  const warm=allLeads.filter(l=>tierKey(l.tier)==="warm").length;
+  const avg =allLeads.length?Math.round(allLeads.reduce((a,l)=>a+l.score,0)/allLeads.length):0;
+  const top =allLeads.length?Math.max(...allLeads.map(l=>l.score)):0;
+  document.getElementById("s-total").textContent=allLeads.length;
+  document.getElementById("s-hot").textContent=hot;
+  document.getElementById("s-warm").textContent=warm;
+  document.getElementById("s-avg").textContent=avg;
+  document.getElementById("s-top").textContent=top;
+}
+
+function tierKey(tier) {
+  if(!tier) return "cool";
+  const t=tier.toLowerCase();
+  if(t.includes("hot"))  return "hot";
+  if(t.includes("warm")) return "warm";
+  return "cool";
+}
+function setFilter(btn,f) {
+  document.querySelectorAll(".pill").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on"); curFilter=f; render();
+}
+function getFiltered() {
+  const q=document.getElementById("searchBox").value.toLowerCase().trim();
+  return allLeads.filter(l=>{
+    const tk=tierKey(l.tier);
+    const matchF=curFilter==="all"||tk===curFilter;
+    const matchS=!q||[l.name,l.injuries,l.state,l.accidentType,l.severity].join(" ").toLowerCase().includes(q);
+    return matchF&&matchS;
+  });
+}
+
+function render() {
+  const leads=getFiltered();
+  const main=document.getElementById("mainContent");
+  if(!leads.length){
+    main.innerHTML=`<div class="grid"><div class="empty">No leads match this filter.</div></div>`;
+    return;
+  }
+  main.innerHTML=`<div class="grid">${leads.map(cardHTML).join("")}</div>`;
+}
+
+function scoreColor(s) {
+  if(s>=85) return "var(--red)";
+  if(s>=70) return "var(--yellow)";
+  if(s>=50) return "var(--blue)";
+  return "var(--muted)";
+}
+function scoreGlow(s) {
+  if(s>=85) return "rgba(220,38,38,.5)";
+  if(s>=70) return "rgba(234,179,8,.4)";
+  if(s>=50) return "rgba(37,99,235,.4)";
+  return "transparent";
+}
+
+function ringHTML(score) {
+  const col=scoreColor(score);
+  const r=21,c=27,circ=2*Math.PI*r;
+  const dash=circ*(score/100);
+  return `<div class="ring-wrap">
+    <svg width="54" height="54" viewBox="0 0 54 54">
+      <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="var(--bg3)" stroke-width="4"/>
+      <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${col}" stroke-width="4"
+        stroke-dasharray="${circ}" stroke-dashoffset="${circ-dash}" stroke-linecap="round"
+        filter="drop-shadow(0 0 4px ${scoreGlow(score)})"/>
+    </svg>
+    <div class="ring-inner">
+      <div class="ring-num" style="color:${col}">${score}</div>
+      <div class="ring-lbl">/ 100</div>
+    </div>
+  </div>`;
+}
+
 function normalizeLead(row) {
   function get() {
-    var keys = Array.prototype.slice.call(arguments);
-    for (var i=0;i<keys.length;i++){var v=row[keys[i]];if(v!==undefined&&v!==null&&v!=='')return v;}
+    var keys=Array.prototype.slice.call(arguments);
+    for(var i=0;i<keys.length;i++){var v=row[keys[i]];if(v!==undefined&&v!==null&&v!=='')return v;}
     return '';
   }
-  var rawScore = parseInt(get('ATTORNEY SCORE','SCORE','score'))||0;
-  var rawTier  = get('TIER','tier','SCORE LABEL','GRADE');
-  var rawLabel = get('SCORE LABEL','GRADE','Grade','grade');
-  var tierStr  = rawTier;
-  if (!tierStr||(!tierStr.toLowerCase().includes('hot')&&!tierStr.toLowerCase().includes('warm')&&!tierStr.toLowerCase().includes('low')&&!tierStr.toLowerCase().includes('priority'))) {
-    tierStr = rawScore>=80?'Hot Lead':rawScore>=60?'Warm Lead':'Low Priority';
+  var rawScore=parseInt(get('ATTORNEY SCORE','SCORE','score'))||0;
+  var rawTier=get('TIER','tier','SCORE LABEL','GRADE');
+  var rawLabel=get('SCORE LABEL','GRADE','Grade','grade');
+  var tierStr=rawTier;
+  if(!tierStr||(!tierStr.toLowerCase().includes('hot')&&!tierStr.toLowerCase().includes('warm')&&!tierStr.toLowerCase().includes('low')&&!tierStr.toLowerCase().includes('priority'))){
+    tierStr=rawScore>=80?'Hot Lead':rawScore>=60?'Warm Lead':'Low Priority';
   }
-  var gradeStr = rawLabel;
-  if      (gradeStr==='HIGH VALUE') gradeStr='A';
-  else if (gradeStr==='MODERATE')   gradeStr='B';
-  else if (gradeStr==='LOW')        gradeStr='D';
-  if (!gradeStr) gradeStr = rawScore>=80?'A':rawScore>=60?'B':'D';
-
+  var gradeStr=rawLabel;
+  if(gradeStr==='HIGH VALUE')gradeStr='A';
+  else if(gradeStr==='MODERATE')gradeStr='B';
+  else if(gradeStr==='LOW')gradeStr='D';
+  if(!gradeStr)gradeStr=rawScore>=80?'A':rawScore>=60?'B':'D';
   return {
-    id:          get('REF #','REF#')||(row['Timestamp']?'ACC-'+new Date(row['Timestamp']).getTime().toString(36).toUpperCase().slice(-6):'ACC-???'),
-    name:        get('Name','name'),
-    phone:       get('Phone','phone'),
-    email:       get('Email','email'),
-    state:       get('State','state'),
+    id:get('REF #','REF#')||(row['Timestamp']?'ACC-'+new Date(row['Timestamp']).getTime().toString(36).toUpperCase().slice(-6):'ACC-???'),
+    name:get('Name','name'),
+    phone:get('Phone','phone'),
+    email:get('Email','email'),
+    state:get('State','state'),
     accidentDate:get('Accident Date','AccidentDate'),
-    daysSince:   get('Days Since','DaysSince'),
+    daysSince:get('Days Since','DaysSince'),
     accidentType:get('Accident Type','AccidentType'),
-    atFault:     get('At Fault','AtFault'),
-    police:      get('Police Report','PoliceReport'),
-    severity:    get('Injury Severity','InjurySeverity'),
-    injuries:    get('Injuries','injuries'),
-    medSought:   get('Sought Medical','SoughtMedical'),
-    medFacility: get('Medical Facility','MedicalFacility'),
+    atFault:get('At Fault','AtFault'),
+    police:get('Police Report','PoliceReport'),
+    severity:get('Injury Severity','InjurySeverity'),
+    injuries:get('Injuries','injuries'),
+    medSought:get('Sought Medical','SoughtMedical'),
+    medFacility:get('Medical Facility','MedicalFacility'),
     hospitalized:get('Hospitalized','hospitalized'),
-    missedWork:  get('Missed Work','MissedWork'),
-    injuryDesc:  get('Injury Description','InjuryDescription','injuryDesc'),
+    missedWork:get('Missed Work','MissedWork'),
+    injuryDesc:get('Injury Description','InjuryDescription'),
     hasInsurance:get('Has Insurance','HasInsurance'),
-    insurer:     get('Insurer','insurer'),
-    otherIns:    get('Other Driver Insured','OtherDriverInsured'),
-    claimFiled:  get('Claim Filed','ClaimFiled'),
-    settlement:  get('Settlement Offered','SettlementOffered'),
-    hasAttorney: get('Has Attorney','HasAttorney'),
-    damageEst:   get('Damage Estimate','DamageEstimate'),
-    status:      get('Status','status')||'New',
-    notes:       get('Notes','notes'),
-    score:       rawScore,
-    grade:       gradeStr,
-    tier:        tierStr,
-    timestamp:   get('Timestamp','timestamp')
+    insurer:get('Insurer','insurer'),
+    otherIns:get('Other Driver Insured','OtherDriverInsured'),
+    claimFiled:get('Claim Filed','ClaimFiled'),
+    settlement:get('Settlement Offered','SettlementOffered'),
+    hasAttorney:get('Has Attorney','HasAttorney'),
+    damageEst:get('Damage Estimate','DamageEstimate'),
+    score:rawScore, grade:gradeStr, tier:tierStr,
+    timestamp:get('Timestamp','timestamp')
   };
 }
 
-// ── LOAD ──────────────────────────────────────────────────────────────────────
-async function loadLeads() {
-  document.getElementById('mainContent').innerHTML='<div class="loading"><div class="spinner"></div><p>Loading live data from Google Sheets...</p></div>';
-  document.getElementById('lastUpdated').textContent='Refreshing...';
-  try {
-    const res  = await fetch(APPS_SCRIPT_URL+'?action=get_leads');
-    const json = await res.json();
-    if (json.status!=='success') throw new Error('error');
-    allLeads = (json.leads||[]).map(normalizeLead);
-    updateStats(); render();
-    document.getElementById('lastUpdated').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  } catch(err) {
-    document.getElementById('mainContent').innerHTML='<div class="error-box"><strong>Could not load live data</strong>Showing sample data. Make sure Apps Script is deployed as a Web App set to Anyone.</div>';
-    allLeads=getSampleData(); updateStats(); render();
-    document.getElementById('lastUpdated').textContent='Sample data (offline)';
-  }
-}
-
-// ── STATS ─────────────────────────────────────────────────────────────────────
-function updateStats() {
-  const hot  = allLeads.filter(l=>tierKey(l.tier)==='hot').length;
-  const warm = allLeads.filter(l=>tierKey(l.tier)==='warm').length;
-  const avg  = allLeads.length?Math.round(allLeads.reduce((a,l)=>a+l.score,0)/allLeads.length):0;
-  const top  = allLeads.length?Math.max(...allLeads.map(l=>l.score)):0;
-  document.getElementById('s-total').textContent=allLeads.length;
-  document.getElementById('s-hot').textContent=hot;
-  document.getElementById('s-warm').textContent=warm;
-  document.getElementById('s-avg').textContent=avg;
-  document.getElementById('s-top').textContent=top;
-}
-
-function tierKey(t){if(!t)return'cool';const s=t.toLowerCase();if(s.includes('hot')||s.includes('high'))return'hot';if(s.includes('warm')||s.includes('moderate'))return'warm';return'cool';}
-function setFilter(btn,f){document.querySelectorAll('.pill').forEach(b=>b.classList.remove('on'));btn.classList.add('on');curFilter=f;render();}
-function getFiltered(){
-  const q=document.getElementById('searchBox').value.toLowerCase().trim();
-  return allLeads.filter(l=>{
-    const tk=tierKey(l.tier);
-    const mF=curFilter==='all'||tk===curFilter;
-    const mS=!q||[l.name,l.injuries,l.state,l.accidentType,l.severity,l.accidentDate].join(' ').toLowerCase().includes(q);
-    return mF&&mS;
-  });
-}
-function render(){
-  const leads=getFiltered(),main=document.getElementById('mainContent');
-  if(!leads.length){main.innerHTML='<div class="grid"><div class="empty">No leads match this filter.</div></div>';return;}
-  main.innerHTML='<div class="grid">'+leads.map(cardHTML).join('')+'</div>';
-}
-
-// ── SCORE ─────────────────────────────────────────────────────────────────────
-function scoreColor(s){return s>=80?'var(--red)':s>=60?'var(--yellow)':s>=40?'var(--blue)':'var(--muted)';}
-function scoreGlow(s){return s>=80?'rgba(220,38,38,.5)':s>=60?'rgba(234,179,8,.4)':s>=40?'rgba(37,99,235,.4)':'transparent';}
-function scoreDesc(s){return s>=85?'Strong case — recommend immediate attorney outreach':s>=70?'Good case — worth pursuing with documentation':s>=50?'Moderate case — may qualify with additional evidence':'Low case value — significant liability barriers';}
-
-function ringHTML(score){
-  const col=scoreColor(score),r=21,c=27,circ=2*Math.PI*r,dash=circ*(score/100);
-  return `<div class="ring-wrap"><svg width="54" height="54" viewBox="0 0 54 54"><circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="var(--bg3)" stroke-width="4"/><circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${col}" stroke-width="4" stroke-dasharray="${circ}" stroke-dashoffset="${circ-dash}" stroke-linecap="round" filter="drop-shadow(0 0 4px ${scoreGlow(score)})"/></svg><div class="ring-inner"><div class="ring-num" style="color:${col}">${score}</div><div class="ring-lbl">/ 100</div></div></div>`;
-}
-
-// ── FACTORS ───────────────────────────────────────────────────────────────────
-function buildFactors(l){
+function buildFactors(l) {
   const f=[];
   const sev=(l.severity||'').toLowerCase();
-  if(sev.includes('critical'))      f.push({text:'Critical injury — life-altering/permanent'});
-  else if(sev.includes('serious'))  f.push({text:'Serious injury — surgery/long-term'});
-  else if(sev.includes('signif'))   f.push({text:'Significant injury — ongoing treatment'});
-  else if(sev.includes('minor'))    f.push({text:'Minor injury — lower case value',warn:true});
-  if((l.medSought||'').toLowerCase().includes('same'))  f.push({text:'Same-day medical treatment'});
-  else if((l.medSought||'').toLowerCase().includes('week')) f.push({text:'Medical treatment within a week'});
-  if((l.hospitalized||'').toLowerCase()==='yes')        f.push({text:'Hospitalized — strong documentation'});
+  if(sev.includes('critical'))f.push('Critical injury — life-altering/permanent');
+  else if(sev.includes('serious'))f.push('Serious injury — surgery/long-term');
+  else if(sev.includes('signif'))f.push('Significant injury — ongoing treatment');
+  else if(sev.includes('minor'))f.push('⚠ Minor injury — lower case value');
+  if((l.medSought||'').toLowerCase().includes('same'))f.push('Same-day medical treatment');
+  else if((l.medSought||'').toLowerCase().includes('week'))f.push('Medical treatment within a week');
+  if((l.hospitalized||'').toLowerCase()==='yes')f.push('Hospitalized — strong documentation');
   const mw=(l.missedWork||'').toLowerCase();
-  if(mw.includes('perman'))         f.push({text:'Permanently unable to work'});
-  else if(mw.includes('3+'))        f.push({text:'3+ months missed work'});
-  else if(mw.includes('1-3 m'))     f.push({text:'1–3 months missed work'});
-  if((l.atFault||'').toLowerCase()==='no')              f.push({text:'Not at fault — clean liability'});
-  else if((l.atFault||'').toLowerCase()==='yes')        f.push({text:'At fault — reduces claim value',warn:true});
-  if((l.police||'').toLowerCase()==='yes')              f.push({text:'Police report filed'});
-  else if((l.police||'').toLowerCase()==='no')          f.push({text:'No police report',warn:true});
+  if(mw.includes('perman'))f.push('Permanently unable to work');
+  else if(mw.includes('3+'))f.push('3+ months missed work');
+  else if(mw.includes('1-3'))f.push('1–3 months missed work');
+  if((l.atFault||'').toLowerCase()==='no')f.push('Not at fault — clean liability');
+  else if((l.atFault||'').toLowerCase()==='yes')f.push('⚠ At fault — reduces claim value');
+  if((l.police||'').toLowerCase()==='yes')f.push('Police report filed');
+  else if((l.police||'').toLowerCase()==='no')f.push('⚠ No police report filed');
   const at=(l.accidentType||'').toLowerCase();
-  if(at.includes('truck'))          f.push({text:'Commercial truck — higher liability'});
-  else if(at.includes('rideshare')) f.push({text:'Rideshare — corporate liability potential'});
-  else if(at.includes('hit'))       f.push({text:'Hit & Run / Uninsured motorist'});
-  if((l.hasAttorney||'').toLowerCase()==='no')          f.push({text:'No prior attorney — clean intake'});
-  else if((l.hasAttorney||'').toLowerCase()==='yes')    f.push({text:'Already has attorney',warn:true});
+  if(at.includes('truck'))f.push('Commercial truck — higher liability');
+  else if(at.includes('rideshare'))f.push('Rideshare — corporate liability');
+  else if(at.includes('hit'))f.push('Hit & Run / Uninsured motorist');
+  if((l.hasAttorney||'').toLowerCase()==='no')f.push('No prior attorney — clean intake');
+  else if((l.hasAttorney||'').toLowerCase()==='yes')f.push('⚠ Already has attorney');
   const dm=(l.damageEst||'').toLowerCase();
-  if(dm.includes('500'))            f.push({text:'Damages $500K+'});
-  else if(dm.includes('100'))       f.push({text:'Damages $100K–$500K'});
-  else if(dm.includes('25'))        f.push({text:'Damages $25K–$100K'});
+  if(dm.includes('500'))f.push('Damages $500K+');
+  else if(dm.includes('100'))f.push('Damages $100K–$500K');
+  else if(dm.includes('25'))f.push('Damages $25K–$100K');
   return f;
 }
 
-// ── CARD ──────────────────────────────────────────────────────────────────────
-function cardHTML(l){
+function cardHTML(l) {
   const tk=tierKey(l.tier);
-  const tLabel=tk==='hot'?'High Value':tk==='warm'?'Moderate':'Low Priority';
-  const factors=buildFactors(l);
-  const chips=factors.slice(0,3).map(f=>`<span class="chip ${f.warn?'warn':''}">${esc(f.text.slice(0,30))}</span>`).join('')+(factors.length>3?`<span class="chip">+${factors.length-3} more</span>`:'');
+  const tLabel=tk==="hot"?"High Value":tk==="warm"?"Moderate":"Low Priority";
+  const allFlags=buildFactors(l);
+  const chips=allFlags.slice(0,3).map(f=>
+    `<span class="chip ${f.includes('⚠')?'warn':''}">${f.replace('⚠','').trim().slice(0,28)}</span>`
+  ).join("")+(allFlags.length>3?`<span class="chip">+${allFlags.length-3} more</span>`:"");
   const injLabel=l.injuries||l.severity||'Injuries not specified';
   const days=l.daysSince!==''&&l.daysSince!==undefined?l.daysSince+' days ago':'—';
+
   return `<div class="card" onclick="openModal('${l.id}')">
     <div class="card-stripe ${tk}-stripe"></div>
     <div class="card-body">
       <div class="card-row1">
-        <div><div class="card-name">${esc(l.name||'—')}</div><div class="card-meta-sub">${esc(l.id)} &middot; ${esc(l.state||'—')}</div></div>
+        <div>
+          <div class="card-name">${l.name||'—'}</div>
+          <div class="card-meta-sub">${l.id} &middot; ${l.state||'—'}</div>
+        </div>
         ${ringHTML(l.score)}
       </div>
-      <div class="injury-tag">${esc(injLabel)}</div>
+      <div class="condition-tag">${injLabel}</div>
       <div class="tier-tag ${tk}">${tLabel} &nbsp;&middot;&nbsp; Grade ${l.grade}</div>
       <div class="card-info-grid">
-        <div class="info-cell">Accident Type<strong>${esc(l.accidentType||'—')}</strong></div>
-        <div class="info-cell">Days Since<strong>${esc(String(days))}</strong></div>
-        <div class="info-cell">At Fault<strong>${esc(l.atFault||'—')}</strong></div>
-        <div class="info-cell">Damage Est.<strong>${esc(l.damageEst||'—')}</strong></div>
+        <div class="info-cell">Accident Type<strong>${l.accidentType||'—'}</strong></div>
+        <div class="info-cell">Days Since<strong>${days}</strong></div>
+        <div class="info-cell">At Fault<strong>${l.atFault||'—'}</strong></div>
+        <div class="info-cell">Damage Est.<strong>${l.damageEst||'—'}</strong></div>
       </div>
       <div class="factor-chips">${chips}</div>
     </div>
     <div class="card-footer">
-      <button class="btn btn-p" onclick="openModal('${l.id}')">View Full Profile</button>
+      <button class="btn btn-p">View Full Profile</button>
       <button class="btn btn-o" onclick="event.stopPropagation();copyLead('${l.id}')">Copy</button>
     </div>
   </div>`;
 }
 
-// ── MODAL ─────────────────────────────────────────────────────────────────────
-function openModal(id){
+function shortWork(w) {
+  if(!w) return "—";
+  if(w.toLowerCase().includes("unemployed")) return "Not Working";
+  if(w.toLowerCase().includes("self")) return "Self-Employed";
+  if(w.toLowerCase().includes("part")) return "Part-Time";
+  if(w.toLowerCase().includes("full")) return "Full-Time";
+  return w.slice(0,14);
+}
+
+function openModal(id) {
   const l=allLeads.find(x=>x.id===id);
-  if(!l)return;
-  const col=scoreColor(l.score),tk=tierKey(l.tier);
-  const tLabel=tk==='hot'?'High Value':tk==='warm'?'Moderate':'Low Priority';
-  const allFactors=buildFactors(l);
+  if(!l) return;
+  const col=scoreColor(l.score);
+  const tk=tierKey(l.tier);
+  const tLabel=tk==="hot"?"High Value":tk==="warm"?"Moderate":"Low Priority";
+  const allFlags=buildFactors(l);
   const days=l.daysSince!==''&&l.daysSince!==undefined?parseInt(l.daysSince):null;
+
   let urgency='';
   if(days!==null){
-    if(days>365)      urgency=`<div class="urgency-hot">🚨 URGENT: ${days} days since accident — Statute of limitations risk!</div>`;
-    else if(days>180) urgency=`<div class="urgency-warn">⚠️ ${days} days since accident — Act soon. Filing window is narrowing.</div>`;
-    else              urgency=`<div class="urgency-ok">✅ ${days} days since accident — Filing window is strong.</div>`;
+    if(days>365) urgency=`<div style="background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-family:var(--mono);font-size:11px;color:var(--red);font-weight:600;">🚨 URGENT: ${days} days since accident — Statute of limitations risk!</div>`;
+    else if(days>180) urgency=`<div style="background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.2);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-family:var(--mono);font-size:11px;color:#b45309;font-weight:600;">⚠️ ${days} days since accident — Act soon.</div>`;
+    else urgency=`<div style="background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-family:var(--mono);font-size:11px;color:#15803d;font-weight:600;">✅ ${days} days since accident — Filing window is strong.</div>`;
   }
-  document.getElementById('mName').textContent=l.name||'Unknown';
-  document.getElementById('mSub').textContent=`${l.id} · ${l.state||'—'} · ${tLabel} · Grade ${l.grade}`;
-  document.getElementById('mBody').innerHTML=`
+
+  document.getElementById("mName").textContent=l.name||'Unknown';
+  document.getElementById("mSub").textContent=`${l.id} · ${l.state||'—'} · ${tLabel} · Grade ${l.grade}`;
+  document.getElementById("mBody").innerHTML=`
     ${urgency}
     <div class="score-hero">
       <div>
@@ -462,108 +922,128 @@ function openModal(id){
         <div class="score-desc">${scoreDesc(l.score)}</div>
       </div>
     </div>
-    <div class="msect"><div class="msect-title">Contact Information</div>
+
+    <div class="msect">
+      <div class="msect-title">Contact Information</div>
       <div class="detail-grid">
-        <div class="ditem">Name<strong>${esc(l.name||'—')}</strong></div>
-        <div class="ditem">Phone<strong>${l.phone?`<a href="tel:${l.phone.replace(/\D/g,'')}" style="color:var(--red)">${esc(l.phone)}</a>`:'—'}</strong></div>
-        <div class="ditem">Email<strong>${l.email?`<a href="mailto:${esc(l.email)}" style="color:var(--red)">${esc(l.email)}</a>`:'—'}</strong></div>
-        <div class="ditem">State<strong>${esc(l.state||'—')}</strong></div>
-        <div class="ditem">REF #<strong>${esc(l.id||'—')}</strong></div>
-        <div class="ditem">Submitted<strong>${l.timestamp?new Date(l.timestamp).toLocaleDateString():'—'}</strong></div>
+        <div class="ditem">Phone<strong>${l.phone||'—'}</strong></div>
+        <div class="ditem">Email<strong>${l.email||'—'}</strong></div>
+        <div class="ditem">State<strong>${l.state||'—'}</strong></div>
+        <div class="ditem">REF #<strong>${l.id||'—'}</strong></div>
       </div>
     </div>
-    <div class="msect"><div class="msect-title">Accident Details</div>
+
+    <div class="msect">
+      <div class="msect-title">Accident Details</div>
       <div class="detail-grid">
-        <div class="ditem">Accident Date<strong>${esc(l.accidentDate||'—')}</strong></div>
+        <div class="ditem">Accident Date<strong>${l.accidentDate||'—'}</strong></div>
         <div class="ditem">Days Since<strong>${days!==null?days+' days':'—'}</strong></div>
-        <div class="ditem">Accident Type<strong>${esc(l.accidentType||'—')}</strong></div>
-        <div class="ditem">At Fault<strong>${esc(l.atFault||'—')}</strong></div>
-        <div class="ditem">Police Report<strong>${esc(l.police||'—')}</strong></div>
-        <div class="ditem">Damage Estimate<strong>${esc(l.damageEst||'—')}</strong></div>
+        <div class="ditem">Accident Type<strong>${l.accidentType||'—'}</strong></div>
+        <div class="ditem">At Fault<strong>${l.atFault||'—'}</strong></div>
+        <div class="ditem">Police Report<strong>${l.police||'—'}</strong></div>
+        <div class="ditem">Damage Estimate<strong>${l.damageEst||'—'}</strong></div>
       </div>
     </div>
-    <div class="msect"><div class="msect-title">Injuries &amp; Medical</div>
+
+    <div class="msect">
+      <div class="msect-title">Injuries &amp; Medical</div>
       <div class="detail-grid">
-        <div class="ditem">Injury Severity<strong>${esc(l.severity||'—')}</strong></div>
-        <div class="ditem">Injuries<strong>${esc(l.injuries||'—')}</strong></div>
-        <div class="ditem">Sought Medical<strong>${esc(l.medSought||'—')}</strong></div>
-        <div class="ditem">Medical Facility<strong>${esc(l.medFacility||'—')}</strong></div>
-        <div class="ditem">Hospitalized<strong>${esc(l.hospitalized||'—')}</strong></div>
-        <div class="ditem">Missed Work<strong>${esc(l.missedWork||'—')}</strong></div>
+        <div class="ditem">Severity<strong>${l.severity||'—'}</strong></div>
+        <div class="ditem">Injuries<strong>${l.injuries||'—'}</strong></div>
+        <div class="ditem">Sought Medical<strong>${l.medSought||'—'}</strong></div>
+        <div class="ditem">Medical Facility<strong>${l.medFacility||'—'}</strong></div>
+        <div class="ditem">Hospitalized<strong>${l.hospitalized||'—'}</strong></div>
+        <div class="ditem">Missed Work<strong>${l.missedWork||'—'}</strong></div>
       </div>
     </div>
-    <div class="msect"><div class="msect-title">Insurance &amp; Claims</div>
+
+    <div class="msect">
+      <div class="msect-title">Insurance &amp; Claims</div>
       <div class="detail-grid">
-        <div class="ditem">Has Insurance<strong>${esc(l.hasInsurance||'—')}</strong></div>
-        <div class="ditem">Insurer<strong>${esc(l.insurer||'—')}</strong></div>
-        <div class="ditem">Other Driver Insured<strong>${esc(l.otherIns||'—')}</strong></div>
-        <div class="ditem">Claim Filed<strong>${esc(l.claimFiled||'—')}</strong></div>
-        <div class="ditem">Settlement Offered<strong>${esc(l.settlement||'—')}</strong></div>
-        <div class="ditem">Has Attorney<strong>${esc(l.hasAttorney||'—')}</strong></div>
+        <div class="ditem">Has Insurance<strong>${l.hasInsurance||'—'}</strong></div>
+        <div class="ditem">Insurer<strong>${l.insurer||'—'}</strong></div>
+        <div class="ditem">Other Driver Insured<strong>${l.otherIns||'—'}</strong></div>
+        <div class="ditem">Claim Filed<strong>${l.claimFiled||'—'}</strong></div>
+        <div class="ditem">Settlement Offered<strong>${l.settlement||'—'}</strong></div>
+        <div class="ditem">Has Attorney<strong>${l.hasAttorney||'—'}</strong></div>
       </div>
     </div>
-    ${l.injuryDesc?`<div class="msect"><div class="msect-title">Impact Statement</div><div class="impact-box">${esc(l.injuryDesc)}</div></div>`:''}
-    ${allFactors.length?`<div class="msect"><div class="msect-title">Scoring Factors (${allFactors.length} reviewed)</div>
-      <ul class="factor-list">${allFactors.map(f=>`<li><span class="fi">${f.warn?'🚩':'✅'}</span><span>${esc(f.text)}</span></li>`).join('')}</ul>
-    </div>`:''}
+
+    ${l.injuryDesc?`<div class="msect"><div class="msect-title">Impact Statement</div><div class="impact-box">${l.injuryDesc}</div></div>`:''}
+
+    <div class="msect">
+      <div class="msect-title">Scoring Factors (${allFlags.length} reviewed)</div>
+      <ul class="factor-list">
+        ${allFlags.map(f=>`<li>
+          <span class="fi">${f.includes('⚠')?'🚩':'✅'}</span>
+          <span>${f.replace('⚠','').trim()}</span>
+        </li>`).join("")}
+      </ul>
+    </div>
+
     <div class="modal-actions">
       <button class="btn btn-p" onclick="copyLead('${l.id}')">Copy Full Profile</button>
       <button class="btn btn-o" onclick="closeModal()">Close</button>
     </div>`;
-  document.getElementById('overlay').classList.add('open');
+
+  document.getElementById("overlay").classList.add("open");
 }
 
-function closeModal(){document.getElementById('overlay').classList.remove('open');}
-document.getElementById('overlay').onclick=e=>{if(e.target.id==='overlay')closeModal();};
+function closeModal() { document.getElementById("overlay").classList.remove("open"); }
+document.getElementById("overlay").onclick=e=>{ if(e.target.id==="overlay") closeModal(); };
 
-// ── COPY ──────────────────────────────────────────────────────────────────────
-function copyLead(id){
+function scoreDesc(s) {
+  if(s>=85) return "Strong case — recommend immediate attorney outreach";
+  if(s>=70) return "Good case — worth pursuing with proper documentation";
+  if(s>=50) return "Moderate case — may qualify with additional evidence";
+  return "Weak case — significant barriers to approval currently";
+}
+
+function copyLead(id) {
   const l=allLeads.find(x=>x.id===id);
-  if(!l)return;
-  const f=buildFactors(l);
+  if(!l) return;
+  const flags=buildFactors(l);
   const text=`ACCIDENT AI LEAD — ${l.id}
-Score: ${l.score}/100 | Grade: ${l.grade} | ${l.tier}
-─────────────────────────────────────────
-Name:           ${l.name}
-Phone:          ${l.phone}
-Email:          ${l.email}
-State:          ${l.state}
-─────────────────────────────────────────
-Accident Date:  ${l.accidentDate}
-Days Since:     ${l.daysSince} days
-Accident Type:  ${l.accidentType}
-At Fault:       ${l.atFault}
-Police Report:  ${l.police}
-Damage Est.:    ${l.damageEst}
-─────────────────────────────────────────
-Injury Severity:${l.severity}
-Injuries:       ${l.injuries}
-Sought Medical: ${l.medSought}
-Hospitalized:   ${l.hospitalized}
-Missed Work:    ${l.missedWork}
-Has Attorney:   ${l.hasAttorney}
-─────────────────────────────────────────
+Score: ${l.score}/100 | Grade: ${l.grade} | Tier: ${l.tier}
+─────────────────────────────────────
+Name:         ${l.name}
+Phone:        ${l.phone||'—'}
+Email:        ${l.email||'—'}
+State:        ${l.state||'—'}
+─────────────────────────────────────
+Accident Date: ${l.accidentDate||'—'}
+Days Since:    ${l.daysSince||'—'}
+Accident Type: ${l.accidentType||'—'}
+At Fault:      ${l.atFault||'—'}
+Police Report: ${l.police||'—'}
+Damage Est.:   ${l.damageEst||'—'}
+─────────────────────────────────────
+Severity:      ${l.severity||'—'}
+Injuries:      ${l.injuries||'—'}
+Sought Medical:${l.medSought||'—'}
+Hospitalized:  ${l.hospitalized||'—'}
+Missed Work:   ${l.missedWork||'—'}
+Has Attorney:  ${l.hasAttorney||'—'}
+─────────────────────────────────────
 SCORING FACTORS:
-${f.map(x=>'• '+x.text).join('\n')}
-─────────────────────────────────────────
+${flags.map(f=>"• "+f.replace('⚠','')).join("\n")}
+─────────────────────────────────────
 Impact: ${l.injuryDesc||'Not provided'}`;
-  navigator.clipboard.writeText(text).then(()=>alert('Profile copied to clipboard!'));
+  navigator.clipboard.writeText(text).then(()=>alert("Profile copied to clipboard!"));
 }
 
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-// ── SAMPLE DATA ───────────────────────────────────────────────────────────────
-function getSampleData(){
+function getSampleData() {
   return [
-    {id:'ACC-001',name:'James Morrison',phone:'(615) 555-0101',email:'jmorrison@email.com',state:'Tennessee',accidentDate:'2025-11-15',daysSince:105,accidentType:'Commercial Truck',atFault:'No',police:'Yes',severity:'Serious — Surgery / Long-term',injuries:'Fractured spine, broken ribs',medSought:'Yes — Same Day',medFacility:'Emergency Room',hospitalized:'Yes',missedWork:'3+ Months',injuryDesc:'Hit by 18-wheeler at a red light. Required emergency surgery, still in physical therapy.',hasInsurance:'Yes',insurer:'State Farm',otherIns:'Yes',claimFiled:'Yes',settlement:'No',hasAttorney:'No',damageEst:'$100K-$500K',score:94,grade:'A',tier:'Hot Lead',status:'New',notes:'',timestamp:'2025-12-01'},
-    {id:'ACC-002',name:'Patricia Williams',phone:'(601) 555-0202',email:'pwilliams@email.com',state:'Mississippi',accidentDate:'2025-12-02',daysSince:88,accidentType:'Rideshare',atFault:'No',police:'Yes',severity:'Significant — Requires Ongoing Treatment',injuries:'TBI, whiplash, shoulder injury',medSought:'Yes — Same Day',medFacility:'Emergency Room',hospitalized:'No',missedWork:'1-3 Months',injuryDesc:'Uber driver ran red light at high speed. Weekly physical therapy and neurological evaluations.',hasInsurance:'Yes',insurer:'USAA',otherIns:'Yes',claimFiled:'Yes',settlement:'No',hasAttorney:'No',damageEst:'$25K-$100K',score:81,grade:'A',tier:'Hot Lead',status:'New',notes:'',timestamp:'2025-12-15'},
-    {id:'ACC-003',name:'Robert Jackson',phone:'(404) 555-0303',email:'rjackson@email.com',state:'Georgia',accidentDate:'2026-01-10',daysSince:49,accidentType:'Auto vs Auto',atFault:'No',police:'Yes',severity:'Moderate — Visible Injury',injuries:'Whiplash, back pain',medSought:'Yes — Within Week',medFacility:'Urgent Care',hospitalized:'No',missedWork:'2-4 Weeks',injuryDesc:'Rear-ended at a stop sign. Chronic neck and back pain.',hasInsurance:'Yes',insurer:'Allstate',otherIns:'Yes',claimFiled:'No',settlement:'No',hasAttorney:'No',damageEst:'$5K-$25K',score:64,grade:'B',tier:'Warm Lead',status:'New',notes:'',timestamp:'2026-01-20'},
-    {id:'ACC-004',name:'Sandra Davis',phone:'(615) 555-0404',email:'sdavis@email.com',state:'Tennessee',accidentDate:'2025-10-20',daysSince:131,accidentType:'Hit & Run / Uninsured',atFault:'No',police:'Yes',severity:'Critical — Life-altering / Permanent',injuries:'Paralysis — lower body, TBI',medSought:'Yes — Same Day',medFacility:'Emergency Room',hospitalized:'Yes',missedWork:'Permanently Unable',injuryDesc:'Hit by uninsured driver at freeway speed. Paralyzed from the waist down. Inpatient rehab.',hasInsurance:'Yes',insurer:'USAA',otherIns:'No',claimFiled:'Yes',settlement:'No',hasAttorney:'No',damageEst:'$500K+',score:97,grade:'A',tier:'Hot Lead',status:'New',notes:'',timestamp:'2025-11-01'},
-    {id:'ACC-005',name:'Michael Thompson',phone:'(901) 555-0505',email:'mthompson@email.com',state:'Tennessee',accidentDate:'2026-01-28',daysSince:31,accidentType:'Commercial Truck',atFault:'Unknown',police:'Pending',severity:'Significant — Requires Ongoing Treatment',injuries:'Knee injury, multiple lacerations',medSought:'Yes — Same Day',medFacility:'Emergency Room',hospitalized:'No',missedWork:'2-4 Weeks',injuryDesc:'Sideswiped by delivery truck on the highway. Knee surgery scheduled next month.',hasInsurance:'Yes',insurer:'Progressive',otherIns:'Yes',claimFiled:'No',settlement:'No',hasAttorney:'No',damageEst:'$25K-$100K',score:74,grade:'B',tier:'Warm Lead',status:'New',notes:'',timestamp:'2026-02-01'},
-    {id:'ACC-006',name:'Dorothy Henderson',phone:'(615) 555-0606',email:'dhenderson@email.com',state:'Tennessee',accidentDate:'2025-09-15',daysSince:166,accidentType:'Auto vs Auto',atFault:'No',police:'Yes',severity:'Serious — Surgery / Long-term',injuries:'Herniated discs L4-L5, S1',medSought:'Yes — Same Day',medFacility:'Emergency Room',hospitalized:'Yes',missedWork:'3+ Months',injuryDesc:'T-boned at an intersection. Two herniated discs requiring surgical intervention and long-term pain management.',hasInsurance:'Yes',insurer:'Geico',otherIns:'Yes',claimFiled:'Yes',settlement:'Offered but rejected',hasAttorney:'No',damageEst:'$100K-$500K',score:89,grade:'A',tier:'Hot Lead',status:'Contacted',notes:'',timestamp:'2025-10-01'}
+    {id:"ACC-001",name:"James Morrison",phone:"(615) 555-0101",email:"jmorrison@email.com",state:"Tennessee",accidentDate:"2025-11-15",daysSince:105,accidentType:"Commercial Truck",atFault:"No",police:"Yes",severity:"Serious — Surgery / Long-term",injuries:"Fractured spine, broken ribs",medSought:"Yes — Same Day",medFacility:"Emergency Room",hospitalized:"Yes",missedWork:"3+ Months",injuryDesc:"Hit by 18-wheeler at a red light. Required emergency surgery and still in physical therapy.",hasInsurance:"Yes",insurer:"State Farm",otherIns:"Yes",claimFiled:"Yes",settlement:"No",hasAttorney:"No",damageEst:"$100K-$500K",score:94,grade:"A",tier:"Hot Lead",timestamp:"2025-12-01"},
+    {id:"ACC-002",name:"Patricia Williams",phone:"(601) 555-0202",email:"pwilliams@email.com",state:"Mississippi",accidentDate:"2025-12-02",daysSince:88,accidentType:"Rideshare",atFault:"No",police:"Yes",severity:"Significant — Requires Ongoing Treatment",injuries:"TBI, whiplash, shoulder injury",medSought:"Yes — Same Day",medFacility:"Emergency Room",hospitalized:"No",missedWork:"1-3 Months",injuryDesc:"Uber driver ran red light at high speed. Weekly physical therapy and neurological evaluations.",hasInsurance:"Yes",insurer:"USAA",otherIns:"Yes",claimFiled:"Yes",settlement:"No",hasAttorney:"No",damageEst:"$25K-$100K",score:81,grade:"A",tier:"Hot Lead",timestamp:"2025-12-15"},
+    {id:"ACC-003",name:"Robert Jackson",phone:"(404) 555-0303",email:"rjackson@email.com",state:"Georgia",accidentDate:"2026-01-10",daysSince:49,accidentType:"Auto vs Auto",atFault:"No",police:"Yes",severity:"Moderate — Visible Injury",injuries:"Whiplash, back pain",medSought:"Yes — Within Week",medFacility:"Urgent Care",hospitalized:"No",missedWork:"2-4 Weeks",injuryDesc:"Rear-ended at a stop sign. Chronic neck and back pain.",hasInsurance:"Yes",insurer:"Allstate",otherIns:"Yes",claimFiled:"No",settlement:"No",hasAttorney:"No",damageEst:"$5K-$25K",score:64,grade:"B",tier:"Warm Lead",timestamp:"2026-01-20"},
+    {id:"ACC-004",name:"Sandra Davis",phone:"(615) 555-0404",email:"sdavis@email.com",state:"Tennessee",accidentDate:"2025-10-20",daysSince:131,accidentType:"Hit & Run / Uninsured",atFault:"No",police:"Yes",severity:"Critical — Life-altering / Permanent",injuries:"Paralysis — lower body, TBI",medSought:"Yes — Same Day",medFacility:"Emergency Room",hospitalized:"Yes",missedWork:"Permanently Unable",injuryDesc:"Hit by uninsured driver at freeway speed. Paralyzed from waist down.",hasInsurance:"Yes",insurer:"USAA",otherIns:"No",claimFiled:"Yes",settlement:"No",hasAttorney:"No",damageEst:"$500K+",score:97,grade:"A",tier:"Hot Lead",timestamp:"2025-11-01"},
+    {id:"ACC-005",name:"Michael Thompson",phone:"(901) 555-0505",email:"mthompson@email.com",state:"Tennessee",accidentDate:"2026-01-28",daysSince:31,accidentType:"Commercial Truck",atFault:"Unknown",police:"Pending",severity:"Significant — Requires Ongoing Treatment",injuries:"Knee injury, multiple lacerations",medSought:"Yes — Same Day",medFacility:"Emergency Room",hospitalized:"No",missedWork:"2-4 Weeks",injuryDesc:"Sideswiped by delivery truck on the highway. Knee surgery scheduled.",hasInsurance:"Yes",insurer:"Progressive",otherIns:"Yes",claimFiled:"No",settlement:"No",hasAttorney:"No",damageEst:"$25K-$100K",score:74,grade:"B",tier:"Warm Lead",timestamp:"2026-02-01"},
+    {id:"ACC-006",name:"Dorothy Henderson",phone:"(615) 555-0606",email:"dhenderson@email.com",state:"Tennessee",accidentDate:"2025-09-15",daysSince:166,accidentType:"Auto vs Auto",atFault:"No",police:"Yes",severity:"Serious — Surgery / Long-term",injuries:"Herniated discs L4-L5, S1",medSought:"Yes — Same Day",medFacility:"Emergency Room",hospitalized:"Yes",missedWork:"3+ Months",injuryDesc:"T-boned at an intersection. Two herniated discs requiring surgery.",hasInsurance:"Yes",insurer:"Geico",otherIns:"Yes",claimFiled:"Yes",settlement:"Offered but rejected",hasAttorney:"No",damageEst:"$100K-$500K",score:89,grade:"A",tier:"Hot Lead",timestamp:"2025-10-01"}
   ];
 }
 
+// Load theme preference and initialize
 loadThemePreference();
 loadLeads();
 </script>
