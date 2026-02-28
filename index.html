@@ -365,7 +365,7 @@ tbody td { padding:11px 14px; font-size:13px; color:var(--text); white-space:now
   <div class="topbar-right">
     <span id="lastUpdated">—</span>
     <button class="tb-btn" onclick="loadData()">↻ Refresh</button>
-    <button class="tb-btn primary" onclick="window.open('accident-intake.html','_blank')">+ New Intake</button>
+    <button class="tb-btn primary" onclick="window.open('https://vence31.github.io/accident-intake/','_blank')">+ New Intake</button>
   </div>
 </div>
 
@@ -549,7 +549,7 @@ tbody td { padding:11px 14px; font-size:13px; color:var(--text); white-space:now
 
 <script>
 // ── STATE ──
-var SCRIPT_URL = localStorage.getItem('accidentAI_url') || '';
+var SCRIPT_URL = localStorage.getItem('accidentAI_url') || 'https://script.google.com/macros/s/AKfycbxs8vw-jadNBh6SOq_uPdz6mMPGXQvoeMGoW7ZGbPbKTaBG1xvrvmST6Pmoc7NLtNM/exec';
 var allLeads = [];
 var filteredLeads = [];
 var currentSort = { col:'Timestamp', dir:'desc' };
@@ -581,27 +581,32 @@ function loadData(silent) {
   if (!SCRIPT_URL) return;
   if (!silent) showLoading();
 
-  // Load summary
+  // Load summary — Apps Script returns { status:"success", summary:{...} }
   fetch(SCRIPT_URL + '?action=get_summary')
     .then(r => r.json())
-    .then(d => { if(d.ok) renderSummary(d.summary); })
+    .then(d => {
+      if (d.status === 'success' && d.summary) renderSummary(d.summary);
+    })
     .catch(e => console.log('Summary error:', e));
 
-  // Load leads
+  // Load leads — Apps Script returns { status:"success", leads:[...], total:N }
   fetch(SCRIPT_URL + '?action=get_leads')
     .then(r => r.json())
     .then(d => {
-      if (d.ok) {
-        allLeads = d.leads;
+      if (d.status === 'success') {
+        allLeads = d.leads || [];
         filterLeads();
         updateNavCounts();
         document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
-        if (!silent) showToast('Data loaded — ' + d.total + ' leads', 'success');
+        if (!silent) showToast('Data loaded — ' + (d.total || 0) + ' leads', 'success');
+      } else {
+        document.getElementById('leadsBody').innerHTML =
+          '<tr class="loading-row"><td colspan="11">⚠️ Script error: ' + (d.message || 'Unknown') + '</td></tr>';
       }
     })
     .catch(e => {
       document.getElementById('leadsBody').innerHTML =
-        '<tr class="loading-row"><td colspan="11">⚠️ Could not load data. Check your Apps Script URL.</td></tr>';
+        '<tr class="loading-row"><td colspan="11">⚠️ Could not reach Apps Script. Make sure it is deployed as Web App set to Anyone.</td></tr>';
     });
 }
 
@@ -612,21 +617,23 @@ function showLoading() {
 
 // ── SUMMARY / KPI ──
 function renderSummary(s) {
-  document.getElementById('kpi-total').textContent = s.total;
-  document.getElementById('kpi-7d').textContent = s.last7Days + ' in last 7 days';
-  document.getElementById('kpi-high').textContent = s.highValue;
-  document.getElementById('kpi-mod').textContent  = s.moderate;
-  document.getElementById('kpi-avg').textContent  = s.avgScore;
+  // Apps Script returns: total, hot, warm, low, avgScore, byType, byFault, byDamage
+  document.getElementById('kpi-total').textContent = s.total || 0;
+  document.getElementById('kpi-7d').textContent = (s.last7Days || 0) + ' in last 7 days';
+  document.getElementById('kpi-high').textContent = s.hot || 0;
+  document.getElementById('kpi-mod').textContent  = s.warm || 0;
+  document.getElementById('kpi-avg').textContent  = s.avgScore || 0;
 
-  var hp = s.total ? Math.round(s.highValue/s.total*100) : 0;
-  var mp = s.total ? Math.round(s.moderate/s.total*100) : 0;
+  var hp = s.total ? Math.round((s.hot  || 0) / s.total * 100) : 0;
+  var mp = s.total ? Math.round((s.warm || 0) / s.total * 100) : 0;
   document.getElementById('kpi-high-pct').textContent = hp + '% of leads';
   document.getElementById('kpi-mod-pct').textContent  = mp + '% of leads';
 
-  renderBarChart('chartType',   s.byType,   typeColors);
-  renderBarChart('chartStatus', s.byStatus, statusColors);
-  renderBarChart('chartFault',  s.byType,   typeColors);   // reuse
-  renderBarChart('chartDmg',    s.byStatus, statusColors); // reuse — will be overridden by real data
+  if (s.byType)   renderBarChart('chartType',   s.byType,   typeColors);
+  if (s.byFault)  renderBarChart('chartFault',  s.byFault,  faultColors);
+  if (s.byDamage) renderBarChart('chartDmg',    s.byDamage, dmgColors);
+  // Build byStatus from leads array since Apps Script doesn't return it separately
+  renderBarChart('chartStatus', buildStatusMap(), statusColors);
 }
 
 var typeColors = {
@@ -637,6 +644,21 @@ var statusColors = {
   'New':'#3b82f6','Contacted':'#8b5cf6','Qualified':'#10b981',
   'Sent to Attorney':'#f59e0b','Closed - Won':'#10b981','Closed - Lost':'#ef4444','Duplicate':'#6b7280'
 };
+var faultColors = {
+  'No':'#10b981','Partially':'#f59e0b','Yes':'#ef4444','Unknown':'#6b7280'
+};
+var dmgColors = {
+  'Under $5K':'#6b7280','$5K-$25K':'#3b82f6','$25K-$100K':'#8b5cf6',
+  '$100K-$500K':'#f59e0b','$500K+':'#10b981','Unknown':'#374151'
+};
+function buildStatusMap() {
+  var map = {};
+  allLeads.forEach(function(l) {
+    var st = l['TIER'] || l['Status'] || 'Unknown';
+    map[st] = (map[st] || 0) + 1;
+  });
+  return map;
+}
 
 function renderBarChart(containerId, data, colorMap) {
   var container = document.getElementById(containerId);
@@ -812,7 +834,7 @@ function openDrawer(lead) {
   var label = lead['SCORE LABEL'] || 'LOW';
   var scoreColor = label==='HIGH VALUE' ? '#10b981' : label==='MODERATE' ? '#f59e0b' : '#ef4444';
 
-  document.getElementById('drawerTitle').textContent = (lead['Name']||'Lead') + ' · ' + (lead['REF #']||'');
+  document.getElementById('drawerTitle').textContent = (lead['Name']||'Lead') + ' · ' + (lead['TIER']||'');
 
   var html = [
     '<div class="drawer-score-row" style="border-left:4px solid '+scoreColor+'">',
@@ -910,7 +932,7 @@ function saveLead() {
   fetch(SCRIPT_URL + '?action=update_lead&ref='+encodeURIComponent(ref)+'&status='+encodeURIComponent(status)+'&notes='+encodeURIComponent(notes))
     .then(r => r.json())
     .then(d => {
-      if (d.ok) {
+      if (d.status === 'success') {
         showToast('Lead updated!', 'success');
         // Update local state
         var lead = allLeads.find(l => l['REF #']===ref);
@@ -918,9 +940,11 @@ function saveLead() {
         closeDrawer();
         filterLeads();
         updateNavCounts();
+      } else {
+        showToast('Update failed: ' + (d.message || 'Error'), 'error');
       }
     })
-    .catch(e => showToast('Update failed', 'error'));
+    .catch(e => showToast('Update failed — check connection', 'error'));
 }
 
 // ── DRAWER HELPERS ──
