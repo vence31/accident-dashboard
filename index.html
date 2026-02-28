@@ -680,8 +680,8 @@ async function loadLeads() {
   try {
     const res=await fetch(APPS_SCRIPT_URL+'?action=get_leads');
     const json=await res.json();
-    if(json.status!=='success') throw new Error("error");
-    allLeads=(json.leads||[]).map(normalizeLead);
+    if(!json.success && json.status!=='success') throw new Error(json.message||'Script error');
+    allLeads=json.leads||[];
     updateStats(); render();
     document.getElementById("lastUpdated").textContent="Updated "+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   } catch(err) {
@@ -691,7 +691,7 @@ async function loadLeads() {
       const json2 = await res2.json();
       // Handle both response formats
       if (json2.status === 'success' || json2.success) {
-        allLeads = (json2.leads || []).map(normalizeLead);
+        allLeads = json2.leads || [];
         updateStats(); render();
         document.getElementById("lastUpdated").textContent="Updated "+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
         return;
@@ -827,6 +827,11 @@ function normalizeLead(row) {
 }
 
 function buildFactors(l) {
+  // Use pre-computed flags from Apps Script if available
+  if (l.flags && l.flags.length) {
+    return [...l.flags, ...(l.warnings||[]).map(w=>"⚠ "+w)];
+  }
+  // Fallback: derive from fields
   const f=[];
   const sev=(l.severity||'').toLowerCase();
   if(sev.includes('critical'))f.push('Critical injury — life-altering/permanent');
