@@ -409,7 +409,7 @@ function cardHTML(l){
   const chips=factors.slice(0,3).map(f=>`<span class="chip ${f.warn?'warn':''}">${esc(f.text.slice(0,30))}</span>`).join('')+(factors.length>3?`<span class="chip">+${factors.length-3} more</span>`:'');
   const injLabel=l.injuries||l.severity||'Injuries not specified';
   const days=l.daysSince!==''&&l.daysSince!==undefined?l.daysSince+' days ago':'—';
-  return `<div class="card" onclick="openModal('${esc(l.id)}')">
+  return `<div class="card" onclick="openModal('${l.id}')">
     <div class="card-stripe ${tk}-stripe"></div>
     <div class="card-body">
       <div class="card-row1">
@@ -427,8 +427,8 @@ function cardHTML(l){
       <div class="factor-chips">${chips}</div>
     </div>
     <div class="card-footer">
-      <button class="btn btn-p">View Full Profile</button>
-      <button class="btn btn-o" onclick="event.stopPropagation();copyLead('${esc(l.id)}')">Copy</button>
+      <button class="btn btn-p" onclick="openModal('${l.id}')">View Full Profile</button>
+      <button class="btn btn-o" onclick="event.stopPropagation();copyLead('${l.id}')">Copy</button>
     </div>
   </div>`;
 }
@@ -507,7 +507,7 @@ function openModal(id){
       <ul class="factor-list">${allFactors.map(f=>`<li><span class="fi">${f.warn?'🚩':'✅'}</span><span>${esc(f.text)}</span></li>`).join('')}</ul>
     </div>`:''}
     <div class="modal-actions">
-      <button class="btn btn-p" onclick="copyLead('${esc(l.id)}')">Copy Full Profile</button>
+      <button class="btn btn-p" onclick="copyLead('${l.id}')">Copy Full Profile</button>
       <button class="btn btn-o" onclick="closeModal()">Close</button>
     </div>`;
   document.getElementById('overlay').classList.add('open');
