@@ -5,95 +5,95 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#020617" id="theme-color">
 <title>Accident AI | Attorney Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* Light theme (default) */
-  --bg-light:      #f8fafc;
-  --bg2-light:     #ffffff;
-  --bg3-light:     #eef2f6;
-  --blue-light:    #2563eb;
-  --blue-d-light:  #1d4ed8;
-  --blue-g-light:  rgba(37,99,235,.12);
-  --cyan-light:    #0891b2;
-  --green-light:   #16a34a;
-  --yellow-light:  #eab308;
-  --red-light:     #dc2626;
-  --gold-light:    #b45309;
-  --slate-light:   #cbd5e1;
-  --text-light:    #0f172a;
-  --muted-light:   #64748b;
-  --border-light:  #e2e8f0;
-  --hot-light:     #dc2626;
-  --warm-light:    #eab308;
-  --cool-light:    #2563eb;
+  --bg-light: #f8fafc;
+  --bg2-light: #ffffff;
+  --bg3-light: #eef2f6;
+  --blue-light: #dc2626;
+  --blue-dim-light: #b91c1c;
+  --blue-glo-light: rgba(220, 38, 38, 0.25);
+  --red-light: #dc2626;
+  --red-d-light: #b91c1c;
+  --green-light: #16a34a;
+  --yellow-light: #eab308;
+  --gold-light: #b45309;
+  --slate-light: #cbd5e1;
+  --text-light: #0f172a;
+  --muted-light: #64748b;
+  --border-light: #e2e8f0;
+  --hot-light: #dc2626;
+  --warm-light: #eab308;
+  --cool-light: #2563eb;
 
-  /* Dark theme */
-  --bg-dark:      #020617;
-  --bg2-dark:     #0f172a;
-  --bg3-dark:     #1e293b;
-  --blue-dark:    #3b82f6;
-  --blue-d-dark:  #1d4ed8;
-  --blue-g-dark:  rgba(59,130,246,.18);
-  --cyan-dark:    #06b6d4;
-  --green-dark:   #10b981;
-  --yellow-dark:  #f59e0b;
-  --red-dark:     #ef4444;
-  --gold-dark:    #c8973a;
-  --slate-dark:   #334155;
-  --text-dark:    #f8fafc;
-  --muted-dark:   #64748b;
-  --border-dark:  rgba(51,65,85,.7);
-  --hot-dark:     #ef4444;
-  --warm-dark:    #f59e0b;
-  --cool-dark:    #3b82f6;
+  --bg-dark: #0a0a0a;
+  --bg2-dark: #111111;
+  --bg3-dark: #1a1a1a;
+  --blue-dark: #ef4444;
+  --blue-dim-dark: #dc2626;
+  --blue-glo-dark: rgba(239, 68, 68, 0.35);
+  --red-dark: #ef4444;
+  --red-d-dark: #dc2626;
+  --green-dark: #10b981;
+  --yellow-dark: #f59e0b;
+  --gold-dark: #c8973a;
+  --slate-dark: #374151;
+  --text-dark: #f9fafb;
+  --muted-dark: #6b7280;
+  --border-dark: rgba(55, 65, 81, 0.6);
+  --hot-dark: #ef4444;
+  --warm-dark: #f59e0b;
+  --cool-dark: #3b82f6;
 
-  /* Default to light theme */
-  --bg:      var(--bg-light);
-  --bg2:     var(--bg2-light);
-  --bg3:     var(--bg3-light);
-  --blue:    var(--blue-light);
-  --blue-d:  var(--blue-d-light);
-  --blue-g:  var(--blue-g-light);
-  --cyan:    var(--cyan-light);
-  --green:   var(--green-light);
-  --yellow:  var(--yellow-light);
-  --red:     var(--red-light);
-  --gold:    var(--gold-light);
-  --slate:   var(--slate-light);
-  --text:    var(--text-light);
-  --muted:   var(--muted-light);
-  --border:  var(--border-light);
-  --hot:     var(--hot-light);
-  --warm:    var(--warm-light);
-  --cool:    var(--cool-light);
+  --bg: var(--bg-light);
+  --bg2: var(--bg2-light);
+  --bg3: var(--bg3-light);
+  --blue: var(--blue-light);
+  --blue-dim: var(--blue-dim-light);
+  --blue-glo: var(--blue-glo-light);
+  --red: var(--red-light);
+  --red-d: var(--red-d-light);
+  --green: var(--green-light);
+  --yellow: var(--yellow-light);
+  --gold: var(--gold-light);
+  --slate: var(--slate-light);
+  --text: var(--text-light);
+  --muted: var(--muted-light);
+  --border: var(--border-light);
+  --hot: var(--hot-light);
+  --warm: var(--warm-light);
+  --cool: var(--cool-light);
 
-  --mono:    'JetBrains Mono', monospace;
-  --display: 'Syne', sans-serif;
-  --body:    'Manrope', sans-serif;
-  --r:       12px;
+  --font: 'Syne', sans-serif;
+  --disp: 'Syne', sans-serif;
+  --body-font: 'Inter', sans-serif;
+  --body: 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --r: 12px;
+  --tr: 0.22s ease;
 }
 
 /* Dark theme class */
 body.dark-theme {
-  --bg:      var(--bg-dark);
-  --bg2:     var(--bg2-dark);
-  --bg3:     var(--bg3-dark);
-  --blue:    var(--blue-dark);
-  --blue-d:  var(--blue-d-dark);
-  --blue-g:  var(--blue-g-dark);
-  --cyan:    var(--cyan-dark);
-  --green:   var(--green-dark);
-  --yellow:  var(--yellow-dark);
-  --red:     var(--red-dark);
-  --gold:    var(--gold-dark);
-  --slate:   var(--slate-dark);
-  --text:    var(--text-dark);
-  --muted:   var(--muted-dark);
-  --border:  var(--border-dark);
-  --hot:     var(--hot-dark);
-  --warm:    var(--warm-dark);
-  --cool:    var(--cool-dark);
+  --bg: var(--bg-dark);
+  --bg2: var(--bg2-dark);
+  --bg3: var(--bg3-dark);
+  --blue: var(--blue-dark);
+  --blue-dim: var(--blue-dim-dark);
+  --blue-glo: var(--blue-glo-dark);
+  --red: var(--red-dark);
+  --red-d: var(--red-d-dark);
+  --green: var(--green-dark);
+  --yellow: var(--yellow-dark);
+  --gold: var(--gold-dark);
+  --slate: var(--slate-dark);
+  --text: var(--text-dark);
+  --muted: var(--muted-dark);
+  --border: var(--border-dark);
+  --hot: var(--hot-dark);
+  --warm: var(--warm-dark);
+  --cool: var(--cool-dark);
 }
 
 *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
@@ -110,18 +110,20 @@ body {
 
 /* Background gradients adapt to theme */
 body::before {
-  content:'';
-  position:fixed; inset:0;
+  content: '';
+  position: fixed;
+  inset: 0;
   background:
-    radial-gradient(circle at 8% 12%, rgba(37,99,235,.15) 0%, transparent 42%),
-    radial-gradient(circle at 90% 80%, rgba(8,145,178,.08) 0%, transparent 38%);
-  pointer-events:none; z-index:0;
+    radial-gradient(circle at 15% 15%, rgba(220, 38, 38, 0.06) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(220, 38, 38, 0.04) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
   transition: opacity 0.3s ease;
 }
 body.dark-theme::before {
   background:
-    radial-gradient(circle at 8% 12%, rgba(30,58,138,.25) 0%, transparent 42%),
-    radial-gradient(circle at 90% 80%, rgba(6,182,212,.06) 0%, transparent 38%);
+    radial-gradient(circle at 15% 15%, rgba(220, 38, 38, 0.14) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(239, 68, 68, 0.06) 0%, transparent 40%);
 }
 
 /* THEME TOGGLE */
